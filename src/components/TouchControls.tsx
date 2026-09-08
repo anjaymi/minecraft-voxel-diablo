@@ -140,16 +140,16 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
 
   return (
     <div className="pointer-events-none absolute inset-0 z-40 select-none md:hidden">
-      {/* ===== 左下：固定摇杆 ===== */}
+      {/* ===== 左下：固定摇杆（DI 式暗色，不抢视野） ===== */}
       <div
-        className="pointer-events-auto absolute bottom-6 left-6 flex h-32 w-32 items-center justify-center rounded-full border-2 border-white/20 bg-stone-950/30 backdrop-blur-[2px] safe-left safe-bottom"
+        className="pointer-events-auto absolute bottom-6 left-6 flex h-32 w-32 items-center justify-center rounded-full border border-white/10 bg-stone-950/25 safe-left safe-bottom"
         onTouchStart={handleStickStart}
         onTouchMove={handleStickMove}
         onTouchEnd={handleStickEnd}
         onTouchCancel={handleStickEnd}
       >
         {/* 十字方向提示 */}
-        <div className="absolute h-full w-full pointer-events-none opacity-20">
+        <div className="absolute h-full w-full pointer-events-none opacity-15">
           <div className="absolute left-1/2 top-2 h-3 w-0.5 -translate-x-1/2 bg-white" />
           <div className="absolute left-1/2 bottom-2 h-3 w-0.5 -translate-x-1/2 bg-white" />
           <div className="absolute top-1/2 left-2 h-0.5 w-3 -translate-y-1/2 bg-white" />
@@ -157,8 +157,8 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
         </div>
         {/* 内杆 */}
         <div
-          className={`h-16 w-16 rounded-full border-2 shadow-lg transition-colors ${
-            knob.active ? 'border-amber-300/90 bg-stone-700/90' : 'border-white/40 bg-stone-800/70'
+          className={`h-16 w-16 rounded-full border shadow-lg transition-colors ${
+            knob.active ? 'border-amber-300/70 bg-stone-700/80' : 'border-white/20 bg-stone-800/50'
           }`}
           style={{ transform: `translate(${knob.dx}px, ${knob.dy}px)` }}
         />

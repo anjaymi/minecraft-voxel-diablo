@@ -84,8 +84,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
 
       {/* Bottom Bar: Health/Mana Orbs & Hotbar */}
       <div className="flex items-end justify-center gap-1 sm:gap-2 md:gap-4 relative">
-        {/* Left: Giant Red Health Globe */}
-        <div className="pointer-events-auto relative z-20 flex flex-col items-center -mr-1 sm:-mr-3">
+        {/* Left: Giant Red Health Globe（手机端改用左上头像+细条，见 TopStatusBar） */}
+        <div className="pointer-events-auto relative z-20 hidden flex-col items-center -mr-3 sm:flex">
           <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 rounded-full border-2 md:border-4 border-stone-800 bg-stone-950 p-1 shadow-[0_0_25px_rgba(220,38,38,0.5)] overflow-hidden">
             <div
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-red-950 via-red-600 to-rose-400 transition-all duration-200"
@@ -232,8 +232,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
           </div>
         </div>
 
-        {/* Right: Giant Blue Mana/Energy Globe */}
-        <div className="pointer-events-auto relative z-20 flex flex-col items-center -ml-1 sm:-ml-3">
+        {/* Right: Giant Blue Mana/Energy Globe（手机端隐藏，同血球） */}
+        <div className="pointer-events-auto relative z-20 hidden flex-col items-center -ml-3 sm:flex">
           <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 rounded-full border-2 md:border-4 border-stone-800 bg-stone-950 p-1 shadow-[0_0_25px_rgba(37,99,235,0.5)] overflow-hidden">
             <div
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-950 via-blue-600 to-cyan-400 transition-all duration-200"

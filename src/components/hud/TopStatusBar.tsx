@@ -22,9 +22,45 @@ export const TopStatusBar: React.FC<TopStatusBarProps> = ({
   onOpenClassSelect,
 }) => {
   const currentClassDef = classSystem.getClass(player.characterClass || 'warrior');
+  const hpPct = Math.max(0, Math.min(100, (player.stats.hp / player.stats.maxHp) * 100));
+  const mpPct = Math.max(0, Math.min(100, (player.stats.mana / player.stats.maxMana) * 100));
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:pl-[96px] sm:pr-[210px]">
+      {/* 手机端：暗黑不朽式左上头像 + 细血/蓝条（替代底部大血球） */}
+      <div className="flex items-end gap-2 sm:hidden pointer-events-auto">
+        <div className="relative">
+          <div
+            className="flex h-12 w-12 items-center justify-center rounded-lg border-2 bg-stone-950/90 text-2xl shadow-lg"
+            style={{ borderColor: currentClassDef.themeColor }}
+          >
+            {currentClassDef.icon}
+          </div>
+          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded border border-stone-600 bg-stone-900 font-mono text-[10px] font-black text-amber-300 shadow">
+            {player.stats.level}
+          </span>
+        </div>
+        <div className="flex w-36 flex-col gap-1 pb-0.5">
+          {/* HP 细条 */}
+          <div className="relative h-2.5 overflow-hidden rounded-sm border border-stone-950 bg-stone-950/90 shadow-inner">
+            <div
+              className="h-full bg-gradient-to-r from-red-800 via-red-600 to-rose-500 transition-all duration-200"
+              style={{ width: `${hpPct}%` }}
+            />
+            <span className="absolute inset-0 flex items-center justify-center font-mono text-[8px] font-bold text-white/90 drop-shadow-[0_1px_1px_#000]">
+              {player.stats.hp} / {player.stats.maxHp}
+            </span>
+          </div>
+          {/* MP 细条 */}
+          <div className="relative h-2 overflow-hidden rounded-sm border border-stone-950 bg-stone-950/90 shadow-inner">
+            <div
+              className="h-full bg-gradient-to-r from-blue-800 via-blue-500 to-cyan-400 transition-all duration-200"
+              style={{ width: `${mpPct}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Dungeon info & Currencies */}
       <div className="flex flex-col gap-1.5 sm:gap-2">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-3 rounded-lg border-2 border-stone-700 bg-stone-900/85 px-2.5 sm:px-4 py-1.5 sm:py-2 text-stone-200 shadow-2xl backdrop-blur-md">

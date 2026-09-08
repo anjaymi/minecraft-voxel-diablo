@@ -144,10 +144,11 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   const inspectedItem = activeInspectedItem && stillOwned ? activeInspectedItem : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm p-2 sm:items-center sm:p-4">
-      <div className="relative w-full max-w-6xl rounded-xl border-2 border-stone-700 bg-gradient-to-b from-stone-900 to-stone-950 p-3 sm:p-4 shadow-2xl text-stone-100 flex flex-col gap-3 max-h-[94vh] sm:max-h-[92vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-stone-800 pb-2.5 safe-top">
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
+      {/* 手机端：DI 式全屏装备界面；sm 以上恢复居中卡片 */}
+      <div className="relative flex w-full flex-col gap-2 overflow-y-auto bg-gradient-to-b from-stone-900 to-stone-950 p-2 text-stone-100 sm:gap-3 sm:rounded-xl sm:border-2 sm:border-stone-700 sm:p-4 sm:shadow-2xl sm:max-h-[94vh]">
+        {/* Header：标题 + 货币 + 关闭 */}
+        <div className="flex items-center justify-between border-b border-stone-800 pb-2 safe-top">
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="text-xl sm:text-2xl">⚔️</span>
             <div>
@@ -159,23 +160,29 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="touch-btn rounded-lg border border-stone-700 bg-stone-800 p-2 text-stone-400 hover:text-white hover:bg-stone-700"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1 rounded-lg border border-emerald-700/60 bg-emerald-950/70 px-2 py-1 text-xs font-black text-emerald-300">
+              💎 {player.stats.emeralds}
+            </span>
+            <button
+              onClick={onClose}
+              className="touch-btn rounded-lg border border-stone-700 bg-stone-800 p-2 text-stone-400 hover:text-white hover:bg-stone-700"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
+        {/* 手机：两栏（左装备 2 列窄栏 + 右背包宽栏）；lg：三栏 12 格 */}
+        <div className="grid flex-1 grid-cols-[minmax(0,5fr)_minmax(0,9fr)] gap-2 lg:grid-cols-12 lg:gap-4">
           {/* Left Column: Equipment Slots (compact 3x2 grid) & Set Bonuses */}
-          <div className="lg:col-span-3 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 lg:col-span-3">
             <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <Shield className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">已穿戴（双击卸下）</span>
               <span className="sm:hidden">已穿戴</span>
             </h3>
-            <div className="grid grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
               {renderSlot('weapon', '主手武器', player.equipment.weapon)}
               {renderSlot('offhand', '副手', player.equipment.offhand)}
               {renderSlot('armor', '胸甲', player.equipment.armor)}
@@ -183,11 +190,13 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
               {renderSlot('boots', '战靴', player.equipment.boots)}
               {renderSlot('ring', '饰品', player.equipment.ring)}
             </div>
-            <SetBonusPanel activeSets={activeSets} />
+            <div className="hidden lg:block">
+              <SetBonusPanel activeSets={activeSets} />
+            </div>
           </div>
 
-          {/* Center Column: PaperDoll Mannequin & Stats Sheet */}
-          <div className="lg:col-span-5 flex flex-col gap-2.5">
+          {/* Center Column: PaperDoll Mannequin & Stats Sheet（手机端隐藏，桌面才显示） */}
+          <div className="hidden flex-col gap-2.5 lg:col-span-5 lg:flex">
             {/* View Switcher Tabs */}
             <div className="flex rounded-lg border border-stone-800 bg-stone-950 p-0.5">
               <button
@@ -267,16 +276,16 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
           </div>
 
           {/* Right Column: Inventory Bag & Hover Comparison */}
-          <div className="lg:col-span-4 flex flex-col gap-3">
+          <div className="col-span-1 flex flex-col gap-2 lg:col-span-4 lg:gap-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
                 背包物品 ({player.inventory.length}/24)
               </h3>
-              <span className="text-[10px] text-stone-400">悬停查看对比</span>
+              <span className="hidden sm:block text-[10px] text-stone-400">悬停查看对比</span>
             </div>
 
-            {/* Inventory Grid: 手机 4 列 / ≥sm 5 列 大格 + 稀有度光效 */}
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-lg border border-stone-800 bg-[radial-gradient(ellipse_at_top,rgba(30,41,59,0.5),rgba(2,6,23,0.9))]">
+            {/* Inventory Grid: 手机 3 列 / sm 4 列 / lg 5 列 + 稀有度光效 */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-lg border border-stone-800 bg-[radial-gradient(ellipse_at_top,rgba(30,41,59,0.5),rgba(2,6,23,0.9))] lg:grid-cols-5">
               {player.inventory.map((item) => {
                 const isSelected = selectedItem?.id === item.id;
                 const isHovered = hoveredItem?.id === item.id;
