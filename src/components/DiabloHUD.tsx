@@ -24,6 +24,8 @@ interface DiabloHUDProps {
   onUseSkill3: () => void;
   onUseSkill4: () => void;
   onUsePotion: () => void;
+  /** 触摸设备：隐藏桌面热键条/大血球（由触控轮盘接管），与宽度无关 */
+  isTouch?: boolean;
 }
 
 export const DiabloHUD: React.FC<DiabloHUDProps> = ({
@@ -43,6 +45,7 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
   onUseSkill3,
   onUseSkill4,
   onUsePotion,
+  isTouch = false,
 }) => {
   const hpPercent = Math.max(0, Math.min(100, (player.stats.hp / player.stats.maxHp) * 100));
   const expPercent = Math.max(0, Math.min(100, (player.stats.exp / player.stats.maxExp) * 100));
@@ -77,6 +80,7 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
         totalKills={totalKills}
         onOpenSkillTree={onOpenSkillTree}
         onOpenClassSelect={onOpenClassSelect}
+        isTouch={isTouch}
       />
 
       {/* Spellcaster & Charged Attack Casting Progress Bar with Release Burst */}
@@ -84,8 +88,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
 
       {/* Bottom Bar: Health/Mana Orbs & Hotbar */}
       <div className="flex items-end justify-center gap-1 sm:gap-2 md:gap-4 relative">
-        {/* Left: Giant Red Health Globe（手机端改用左上头像+细条，见 TopStatusBar） */}
-        <div className="pointer-events-auto relative z-20 hidden flex-col items-center -mr-3 sm:flex">
+        {/* Left: Giant Red Health Globe（触摸设备由左上头像条接管，见 TopStatusBar） */}
+        <div className={`pointer-events-auto relative z-20 flex-col items-center -mr-3 ${isTouch ? 'hidden' : 'flex'}`}>
           <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 rounded-full border-2 md:border-4 border-stone-800 bg-stone-950 p-1 shadow-[0_0_25px_rgba(220,38,38,0.5)] overflow-hidden">
             <div
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-red-950 via-red-600 to-rose-400 transition-all duration-200"
@@ -127,8 +131,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
           {/* Dynamic Combat Feedback Ribbon */}
           <CombatFeedbackBar player={player} />
 
-          {/* Skill / Item Slots（手机端由触控轮盘接管，sm 以下隐藏） */}
-          <div className="hidden sm:flex items-center gap-2 mb-1.5 touch-btn">
+          {/* Skill / Item Slots（触摸设备由触控轮盘接管，与宽度无关） */}
+          <div className={`items-center gap-2 mb-1.5 touch-btn ${isTouch ? 'hidden' : 'flex'}`}>
             {/* Slot 1: Primary Attack */}
             <div className="group relative flex flex-col items-center">
               <div
@@ -232,8 +236,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
           </div>
         </div>
 
-        {/* Right: Giant Blue Mana/Energy Globe（手机端隐藏，同血球） */}
-        <div className="pointer-events-auto relative z-20 hidden flex-col items-center -ml-3 sm:flex">
+        {/* Right: Giant Blue Mana/Energy Globe（触摸设备隐藏，同血球） */}
+        <div className={`pointer-events-auto relative z-20 flex-col items-center -ml-3 ${isTouch ? 'hidden' : 'flex'}`}>
           <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 rounded-full border-2 md:border-4 border-stone-800 bg-stone-950 p-1 shadow-[0_0_25px_rgba(37,99,235,0.5)] overflow-hidden">
             <div
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-950 via-blue-600 to-cyan-400 transition-all duration-200"

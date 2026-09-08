@@ -13,16 +13,18 @@ interface TouchControlsProps {
   onPotion: () => void;
   onDash: () => void;
   onInteract: () => void;
+  onOpenInventory: () => void;
+  onOpenCamp: () => void;
 }
 
 /**
- * TouchControls — 暗黑不朽风格移动操控层（仅触屏/小屏渲染）。
+ * TouchControls — 暗黑不朽风格移动操控层（由 App 按触摸能力决定是否渲染）。
  *
  * 布局范式（参考 DI 手游横版）：
  *  - 左下：固定半透明摇杆（外圈+内杆，拖动控制方向，松开回中）；
  *  - 右下：大普攻按钮 + 环绕技能弧（副手/1-4 技能/药水），
  *    冷却用数字角标显示；
- *  - 摇杆上方：交互按钮（E）与冲刺。
+ *  - 摇杆上方：交互 / 冲刺 / 背包 / 营地纵列。
  */
 export const TouchControls: React.FC<TouchControlsProps> = ({
   player,
@@ -35,6 +37,8 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
   onPotion,
   onDash,
   onInteract,
+  onOpenInventory,
+  onOpenCamp,
 }) => {
   const [knob, setKnob] = useState<{ dx: number; dy: number; active: boolean }>({ dx: 0, dy: 0, active: false });
   const stickIdRef = useRef<number | null>(null);
@@ -139,7 +143,7 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
   );
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-40 select-none md:hidden">
+    <div className="pointer-events-none absolute inset-0 z-40 select-none">
       {/* ===== 左下：固定摇杆（DI 式暗色，不抢视野） ===== */}
       <div
         className="pointer-events-auto absolute bottom-6 left-6 flex h-32 w-32 items-center justify-center rounded-full border border-white/10 bg-stone-950/25 safe-left safe-bottom"
@@ -164,10 +168,12 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
         />
       </div>
 
-      {/* ===== 摇杆上方：交互 / 冲刺 ===== */}
+      {/* ===== 摇杆上方：交互 / 冲刺 / 背包 / 营地 ===== */}
       <div className="pointer-events-auto absolute left-8 flex flex-col gap-3" style={{ bottom: '170px' }}>
         <TouchBtn icon="E" size={52} onPress={onInteract} className="border-emerald-400/70 bg-emerald-950/70 text-emerald-300 font-black shadow-[0_0_12px_rgba(52,211,153,0.35)]" label="交互" />
         <TouchBtn icon="💨" size={52} onPress={onDash} cooldown={player.dashCooldown} className="border-amber-400/70 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]" label="冲刺" />
+        <TouchBtn icon="🎒" size={52} onPress={onOpenInventory} className="border-stone-400/60 bg-stone-800/80 shadow-lg" label="背包" />
+        <TouchBtn icon="⛺" size={52} onPress={onOpenCamp} className="border-orange-400/60 bg-orange-950/70 shadow-lg" label="营地" />
       </div>
 
       {/* ===== 右下：DI 风格技能轮盘 ===== */}

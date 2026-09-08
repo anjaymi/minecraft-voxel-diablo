@@ -11,6 +11,8 @@ interface TopStatusBarProps {
   totalKills: number;
   onOpenSkillTree?: () => void;
   onOpenClassSelect?: () => void;
+  /** 触摸设备：显示左上头像+细条（DI 式），与宽度无关 */
+  isTouch?: boolean;
 }
 
 export const TopStatusBar: React.FC<TopStatusBarProps> = ({
@@ -20,6 +22,7 @@ export const TopStatusBar: React.FC<TopStatusBarProps> = ({
   totalKills,
   onOpenSkillTree,
   onOpenClassSelect,
+  isTouch = false,
 }) => {
   const currentClassDef = classSystem.getClass(player.characterClass || 'warrior');
   const hpPct = Math.max(0, Math.min(100, (player.stats.hp / player.stats.maxHp) * 100));
@@ -27,8 +30,8 @@ export const TopStatusBar: React.FC<TopStatusBarProps> = ({
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:pl-[96px] sm:pr-[210px]">
-      {/* 手机端：暗黑不朽式左上头像 + 细血/蓝条（替代底部大血球） */}
-      <div className="flex items-end gap-2 sm:hidden pointer-events-auto">
+      {/* 触摸设备：暗黑不朽式左上头像 + 细血/蓝条（替代底部大血球） */}
+      <div className={`items-end gap-2 pointer-events-auto ${isTouch ? 'flex' : 'hidden'}`}>
         <div className="relative">
           <div
             className="flex h-12 w-12 items-center justify-center rounded-lg border-2 bg-stone-950/90 text-2xl shadow-lg"
@@ -144,8 +147,14 @@ export const TopStatusBar: React.FC<TopStatusBarProps> = ({
         </div>
       )}
 
-      {/* Top Right Quick Controls（技能/转职常驻，其余收纳进设置面板）；手机上与右侧控件错开 */}
-      <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 absolute right-1 top-[86px] sm:static sm:right-auto sm:top-auto flex-col sm:flex-row">
+      {/* Top Right Quick Controls（技能/转职常驻，其余收纳进设置面板）；触摸设备排在状态行下方避免压住小地图 */}
+      <div
+        className={`pointer-events-auto flex items-center gap-1.5 ${
+          isTouch
+            ? 'flex-row'
+            : 'absolute right-1 top-[86px] flex-col sm:static sm:right-auto sm:top-auto sm:flex-row sm:gap-2'
+        }`}
+      >
         {onOpenSkillTree && (
           <button
             onClick={onOpenSkillTree}

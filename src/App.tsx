@@ -12,6 +12,7 @@ import { BossIntroBanner } from './components/BossIntroBanner';
 import { TouchControls } from './components/TouchControls';
 import { saveToSlot, loadFromSlot, exportToFile, importFromFile, hasSlot, getSlotSummary } from './engine/save/SaveSystem';
 import { gpuAcceleration } from './engine/perf/exports';
+import { useIsTouch } from './hooks/useIsTouch';
 import { AppModalsContainer } from './components/AppModalsContainer';
 import { soundManager } from './audio/soundManager';
 import { bgmSystem } from './audio/bgmSystem';
@@ -53,6 +54,8 @@ export default function App() {
 
   const isDraggingOnCanvasRef = useRef(false);
   const isAnyModalOpenRef = useRef(false);
+  // 触摸能力（非宽度断点）：决定移动/桌面 HUD 布局
+  const isTouch = useIsTouch();
 
   // Reactive state for HUD updates
   const [, setFrameTick] = useState(0);
@@ -567,8 +570,8 @@ export default function App() {
         <p className="text-[11px] text-stone-400">旋转设备获得完整视野与操控布局</p>
       </div>
 
-      {/* 移动端虚拟摇杆与技能轮盘（暗黑不朽风格，md 以下才显示） */}
-      {eng && player && (
+      {/* 移动端虚拟摇杆与技能轮盘（暗黑不朽风格，按触摸能力显示） */}
+      {eng && player && isTouch && (
         <TouchControls
           player={player}
           onMove={(x, y) => {
@@ -587,6 +590,8 @@ export default function App() {
           onPotion={() => eng.useHotkey('q')}
           onDash={() => eng.playerDash()}
           onInteract={() => eng.tryInteract()}
+          onOpenInventory={() => setIsInventoryOpen(true)}
+          onOpenCamp={() => setIsCampOpen(true)}
         />
       )}
 
@@ -606,6 +611,7 @@ export default function App() {
           onUseSkill3={() => eng.useHotkey('3')}
           onUseSkill4={() => eng.useHotkey('4')}
           onUsePotion={() => eng.useHotkey('q')}
+          isTouch={isTouch}
         />
       )}
 
@@ -637,7 +643,7 @@ export default function App() {
         )}
         {eng && eng.questSystem && (
           <div className="pointer-events-auto">
-            <QuestTracker quest={typeof eng.questSystem.getCurrentQuest === 'function' ? eng.questSystem.getCurrentQuest() : eng.questSystem.currentQuest || null} />
+            <QuestTracker quest={typeof eng.questSystem.getCurrentQuest === 'function' ? eng.questSystem.getCurrentQuest() : eng.questSystem.currentQuest || null} defaultCollapsed={isTouch} />
           </div>
         )}
       </div>

@@ -18,10 +18,12 @@ import { soundManager } from '../audio/soundManager';
 
 interface QuestTrackerProps {
   quest: FloorQuest | null;
+  /** 触摸设备：默认折叠成一行，避免遮挡触控区（DI 式紧凑任务条） */
+  defaultCollapsed?: boolean;
 }
 
-export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest }) => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest, defaultCollapsed = false }) => {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
   const [showRewardModal, setShowRewardModal] = useState<boolean>(false);
   const prevCompletedRef = useRef<boolean>(false);
 
