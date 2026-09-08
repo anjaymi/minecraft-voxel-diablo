@@ -634,16 +634,25 @@ export default function App() {
         </div>
       )}
 
+      {/* 触摸设备：任务面板移到左上（DI 式，头像条下方），右列只留小地图 */}
+      {eng && eng.questSystem && isTouch && (
+        <div className="pointer-events-none absolute left-2 top-[96px] z-20">
+          <div className="pointer-events-auto">
+            <QuestTracker quest={typeof eng.questSystem.getCurrentQuest === 'function' ? eng.questSystem.getCurrentQuest() : eng.questSystem.currentQuest || null} defaultCollapsed isTouch />
+          </div>
+        </div>
+      )}
+
       {/* Top Right Corner: MiniMap & Dynamic Dungeon Quest Tracker */}
       <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2.5 pointer-events-none">
         {eng && player && (
           <div className="pointer-events-auto">
-            <MiniMap floor={eng.floor} player={player} enemies={eng.enemies} adventurers={eng.adventurerManager.getAll()} />
+            <MiniMap floor={eng.floor} player={player} enemies={eng.enemies} adventurers={eng.adventurerManager.getAll()} isTouch={isTouch} />
           </div>
         )}
-        {eng && eng.questSystem && (
+        {eng && eng.questSystem && !isTouch && (
           <div className="pointer-events-auto">
-            <QuestTracker quest={typeof eng.questSystem.getCurrentQuest === 'function' ? eng.questSystem.getCurrentQuest() : eng.questSystem.currentQuest || null} defaultCollapsed={isTouch} />
+            <QuestTracker quest={typeof eng.questSystem.getCurrentQuest === 'function' ? eng.questSystem.getCurrentQuest() : eng.questSystem.currentQuest || null} />
           </div>
         )}
       </div>

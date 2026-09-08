@@ -20,9 +20,11 @@ interface QuestTrackerProps {
   quest: FloorQuest | null;
   /** 触摸设备：默认折叠成一行，避免遮挡触控区（DI 式紧凑任务条） */
   defaultCollapsed?: boolean;
+  /** 触摸设备：整体缩小，给技能轮盘让位 */
+  isTouch?: boolean;
 }
 
-export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest, defaultCollapsed = false }) => {
+export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest, defaultCollapsed = false, isTouch = false }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(defaultCollapsed);
   const [showRewardModal, setShowRewardModal] = useState<boolean>(false);
   const prevCompletedRef = useRef<boolean>(false);
@@ -92,7 +94,9 @@ export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest, defaultCollap
       initial={{ opacity: 0, y: -8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="pointer-events-auto w-56 sm:w-72 md:w-84 font-sans select-none origin-top-right scale-[0.88] sm:scale-100"
+      className={`pointer-events-auto font-sans select-none ${
+        isTouch ? 'w-60 origin-top-left scale-[0.85]' : 'w-56 sm:w-72 md:w-84 origin-top-right scale-[0.88] sm:scale-100'
+      }`}
     >
       <div
         className={`rounded-2xl border-2 transition-all duration-300 shadow-2xl backdrop-blur-md overflow-hidden ${

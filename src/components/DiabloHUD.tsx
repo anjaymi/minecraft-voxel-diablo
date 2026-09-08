@@ -231,7 +231,7 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
             </div>
             <div className="flex justify-between w-full text-[9px] font-mono text-stone-400 px-1 mt-0.5">
               <span>EXP: {player.stats.exp} / {player.stats.maxExp}</span>
-              <span className="hidden sm:block">WASD移动 · 左键攻击 · 右键特技 · 空格冲刺</span>
+              {!isTouch && <span>WASD移动 · 左键攻击 · 右键特技 · 空格冲刺</span>}
             </div>
           </div>
         </div>

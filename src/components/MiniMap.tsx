@@ -8,6 +8,8 @@ interface MiniMapProps {
   player: Player;
   enemies: Enemy[];
   adventurers?: AdventurerEntity[];
+  /** 触摸设备：整体缩小，少占战斗视野 */
+  isTouch?: boolean;
 }
 
 /** 环境地形雷达配色（户外与新增装饰瓦片） */
@@ -51,7 +53,7 @@ const MINI_MAP_TILE_COLORS: Record<string, string> = {
   bone_pile: '#d6d3d1',
 };
 
-export const MiniMap: React.FC<MiniMapProps> = ({ floor, player, enemies, adventurers = [] }) => {
+export const MiniMap: React.FC<MiniMapProps> = ({ floor, player, enemies, adventurers = [], isTouch = false }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
@@ -146,7 +148,9 @@ export const MiniMap: React.FC<MiniMapProps> = ({ floor, player, enemies, advent
   return (
     <div
       id="minimap-container"
-      className="pointer-events-auto relative flex flex-col items-end"
+      className={`pointer-events-auto relative flex flex-col items-end ${
+        isTouch ? 'origin-top-right scale-[0.62]' : ''
+      }`}
     >
       <div className="relative rounded-lg border-2 border-stone-700 bg-stone-950/85 p-1.5 shadow-2xl backdrop-blur-md">
         <div className="flex items-center justify-between pb-1 px-1 text-[10px] text-stone-400 font-mono">
@@ -165,7 +169,7 @@ export const MiniMap: React.FC<MiniMapProps> = ({ floor, player, enemies, advent
           ref={canvasRef}
           width={isExpanded ? 240 : 130}
           height={isExpanded ? 240 : 130}
-          className="rounded border border-stone-800 bg-stone-900 scale-[0.72] sm:scale-100 origin-top-right"
+          className="rounded border border-stone-800 bg-stone-900"
         />
         <div className="flex justify-between text-[8px] font-mono text-stone-400 px-1 pt-1">
           <span className="text-emerald-400">● 玩家</span>

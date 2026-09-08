@@ -168,12 +168,12 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
         />
       </div>
 
-      {/* ===== 摇杆上方：交互 / 冲刺 / 背包 / 营地 ===== */}
-      <div className="pointer-events-auto absolute left-8 flex flex-col gap-3" style={{ bottom: '170px' }}>
-        <TouchBtn icon="E" size={52} onPress={onInteract} className="border-emerald-400/70 bg-emerald-950/70 text-emerald-300 font-black shadow-[0_0_12px_rgba(52,211,153,0.35)]" label="交互" />
-        <TouchBtn icon="💨" size={52} onPress={onDash} cooldown={player.dashCooldown} className="border-amber-400/70 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]" label="冲刺" />
-        <TouchBtn icon="🎒" size={52} onPress={onOpenInventory} className="border-stone-400/60 bg-stone-800/80 shadow-lg" label="背包" />
-        <TouchBtn icon="⛺" size={52} onPress={onOpenCamp} className="border-orange-400/60 bg-orange-950/70 shadow-lg" label="营地" />
+      {/* ===== 摇杆右侧：交互 / 冲刺 / 背包 / 营地（2x2，不压左上视野） ===== */}
+      <div className="pointer-events-auto absolute left-[164px] bottom-7 grid grid-cols-2 gap-2.5 safe-left">
+        <TouchBtn icon="E" size={50} onPress={onInteract} className="border-emerald-400/70 bg-emerald-950/70 text-emerald-300 font-black shadow-[0_0_12px_rgba(52,211,153,0.35)]" label="交互" />
+        <TouchBtn icon="💨" size={50} onPress={onDash} cooldown={player.dashCooldown} className="border-amber-400/70 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]" label="冲刺" />
+        <TouchBtn icon="🎒" size={50} onPress={onOpenInventory} className="border-stone-400/60 bg-stone-800/80 shadow-lg" label="背包" />
+        <TouchBtn icon="⛺" size={50} onPress={onOpenCamp} className="border-orange-400/60 bg-orange-950/70 shadow-lg" label="营地" />
       </div>
 
       {/* ===== 右下：DI 风格技能轮盘 ===== */}
