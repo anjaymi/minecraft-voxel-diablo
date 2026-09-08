@@ -427,7 +427,6 @@ export default function App() {
   const handleCanvasTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const eng = engineRef.current;
     if (!eng || isAnyModalOpenRef.current) return;
-    e.preventDefault();
 
     const t = e.changedTouches[0];
     if (!t) return;
@@ -449,7 +448,6 @@ export default function App() {
   const handleCanvasTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const eng = engineRef.current;
     if (!eng || isAnyModalOpenRef.current) return;
-    e.preventDefault();
 
     const t = e.touches[0];
     if (!t) return;
@@ -470,7 +468,6 @@ export default function App() {
   const handleCanvasTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const eng = engineRef.current;
     if (!eng) return;
-    e.preventDefault();
 
     if (e.touches.length === 0) {
       eng.onMouseUp();

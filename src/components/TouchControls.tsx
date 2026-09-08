@@ -48,7 +48,6 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
   const handleStickStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const t = e.changedTouches[0];
     if (!t || stickIdRef.current !== null) return;
-    e.preventDefault();
     stickIdRef.current = t.identifier;
     setKnob({ dx: 0, dy: 0, active: true });
   }, []);
@@ -59,7 +58,6 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       if (id === null) return;
       const t = [...e.changedTouches].find((tt) => tt.identifier === id);
       if (!t) return;
-      e.preventDefault();
 
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
@@ -85,7 +83,6 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       if (id === null) return;
       const t = [...e.changedTouches].find((tt) => tt.identifier === id);
       if (!t) return;
-      e.preventDefault();
       stickIdRef.current = null;
       setKnob({ dx: 0, dy: 0, active: false });
       onMove(0, 0);
@@ -120,11 +117,9 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       className={`touch-btn relative flex items-center justify-center rounded-full border-2 select-none ${className}`}
       style={{ width: size, height: size, ...style }}
       onTouchStart={(e) => {
-        e.preventDefault();
         onPress();
       }}
       onTouchEnd={(e) => {
-        e.preventDefault();
         onRelease?.();
       }}
     >

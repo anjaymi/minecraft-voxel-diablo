@@ -126,7 +126,20 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
           </div>
         </div>
 
-        {/* Center: Action Hotbar & Dynamic Combat Feedback */}
+        {/* Center: 触摸设备只留一条细 XP 条，把底部整个让给摇杆/技能轮盘（DI 式） */}
+        {isTouch ? (
+          <div className="pointer-events-none relative z-10 mx-auto w-full max-w-md px-2">
+            <span className="absolute -top-4 left-1/2 -translate-x-1/2 font-mono text-[10px] font-black text-[#55FF55] drop-shadow-[0_1px_2px_#000]">
+              {player.stats.level}
+            </span>
+            <div className="h-1.5 w-full overflow-hidden rounded-full border border-stone-800 bg-stone-950/80">
+              <div
+                className="h-full bg-gradient-to-r from-[#55FF55] to-[#80FF00] transition-all duration-150"
+                style={{ width: `${expPercent}%` }}
+              />
+            </div>
+          </div>
+        ) : (
         <div className="pointer-events-auto relative z-10 flex flex-col items-center rounded-t-xl border-t-2 border-x-2 border-stone-700 bg-gradient-to-b from-stone-900/95 to-stone-950/95 px-2 sm:px-4 pt-2 pb-1 shadow-2xl backdrop-blur-md">
           {/* Dynamic Combat Feedback Ribbon */}
           <CombatFeedbackBar player={player} />
@@ -235,6 +248,7 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
             </div>
           </div>
         </div>
+        )}
 
         {/* Right: Giant Blue Mana/Energy Globe（触摸设备隐藏，同血球） */}
         <div className={`pointer-events-auto relative z-20 flex-col items-center -ml-3 ${isTouch ? 'hidden' : 'flex'}`}>
