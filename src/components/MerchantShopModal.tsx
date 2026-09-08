@@ -82,31 +82,31 @@ export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, on
   const isAffordable = (entry: ShopEntry): boolean => player.stats.emeralds >= entry.price;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-sm p-2 sm:items-center sm:p-4" onClick={onClose}>
       <div
-        className="relative flex w-full max-w-4xl max-h-[90vh] flex-col overflow-hidden rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-stone-100"
+        className="relative flex w-full max-w-4xl max-h-[94vh] sm:max-h-[90vh] flex-col overflow-hidden rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-stone-100"
         style={{ background: 'radial-gradient(ellipse at top, #33291f 0%, #221a12 45%, #181209 100%)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* ===== 顶栏：店名 + 金币 ===== */}
-        <div className="flex items-center justify-between border-b border-amber-900/60 bg-black/30 px-5 py-3.5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-500/25 to-amber-900/40 text-2xl shadow-inner">
+        <div className="flex items-center justify-between border-b border-amber-900/60 bg-black/30 px-3 sm:px-5 py-2.5 sm:py-3.5 safe-top">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-500/25 to-amber-900/40 text-xl sm:text-2xl shadow-inner">
               💰
             </div>
             <div>
-              <h2 className="text-lg font-black tracking-wide text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+              <h2 className="text-base sm:text-lg font-black tracking-wide text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                 行商的百宝囊
               </h2>
-              <p className="text-[11px] text-stone-400">远征归来的稀罕货 · 绿宝石通货交易</p>
+              <p className="hidden sm:block text-[11px] text-stone-400">远征归来的稀罕货 · 绿宝石通货交易</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 rounded-lg border border-emerald-700/60 bg-emerald-950/70 px-3 py-1.5 text-sm font-black text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="flex items-center gap-1.5 rounded-lg border border-emerald-700/60 bg-emerald-950/70 px-2.5 sm:px-3 py-1.5 text-sm font-black text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
               <Coins className="h-4 w-4" />
               {player.stats.emeralds}
             </span>
-            <button onClick={onClose} className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-stone-800 hover:text-white">
+            <button onClick={onClose} className="touch-btn rounded-lg p-2 text-stone-400 transition-colors hover:bg-stone-800 hover:text-white">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -213,8 +213,8 @@ export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, on
             </div>
           </div>
 
-          {/* 右：详情 / 购买卡 */}
-          <div className="hidden min-h-0 flex-col sm:flex">
+          {/* 右：详情 / 购买卡（手机端堆叠在目录下方） */}
+          <div className="flex min-h-0 flex-col sm:flex">
             {active && !active.sold ? (
               <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
                 <ItemComparisonTooltip
@@ -258,11 +258,11 @@ export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, on
         </div>
 
         {/* ===== 底栏：提示 + 刷新 ===== */}
-        <div className="flex items-center justify-between border-t border-amber-900/60 bg-black/30 px-5 py-3">
-          <span className="text-[10px] text-stone-500">💡 换区域后行商进新货 · 也可以用绿宝石即刻翻新</span>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-amber-900/60 bg-black/30 px-3 sm:px-5 py-2.5 sm:py-3 safe-bottom">
+          <span className="hidden sm:block text-[10px] text-stone-500">💡 换区域后行商进新货 · 也可以用绿宝石即刻翻新</span>
           <button
             onClick={handleRestock}
-            className="flex items-center gap-1.5 rounded-lg border border-sky-600/60 bg-sky-900/40 px-3.5 py-1.5 text-xs font-bold text-sky-300 transition-colors hover:bg-sky-900/70"
+            className="touch-btn flex items-center gap-1.5 rounded-lg border border-sky-600/60 bg-sky-900/40 px-3.5 py-2 text-xs font-bold text-sky-300 transition-colors hover:bg-sky-900/70"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             刷新商品（{SHOP_RESTOCK_COST} 💎）

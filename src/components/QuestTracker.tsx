@@ -90,7 +90,7 @@ export const QuestTracker: React.FC<QuestTrackerProps> = ({ quest }) => {
       initial={{ opacity: 0, y: -8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="pointer-events-auto w-72 md:w-84 font-sans select-none"
+      className="pointer-events-auto w-56 sm:w-72 md:w-84 font-sans select-none origin-top-right scale-[0.88] sm:scale-100"
     >
       <div
         className={`rounded-2xl border-2 transition-all duration-300 shadow-2xl backdrop-blur-md overflow-hidden ${

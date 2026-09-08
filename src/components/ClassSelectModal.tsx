@@ -28,26 +28,27 @@ export const ClassSelectModal: React.FC<ClassSelectModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl rounded-2xl border-2 border-stone-600 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-md p-2 sm:items-center sm:p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl rounded-2xl border-2 border-stone-600 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[92vh]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-stone-700 bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-amber-500/50 bg-amber-500/10 text-2xl">
+        <div className="flex items-center justify-between border-b-2 border-stone-700 bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 px-3 sm:px-6 py-3 sm:py-4 safe-top">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg border border-amber-500/50 bg-amber-500/10 text-xl sm:text-2xl">
               ⚔️
             </div>
             <div>
-              <h2 className="text-xl font-black tracking-wide text-amber-400 font-mono flex items-center gap-2">
-                英雄职业殿堂 (HERO CLASS SANCTUARY)
+              <h2 className="text-base sm:text-xl font-black tracking-wide text-amber-400 font-mono flex items-center gap-2">
+                <span className="hidden sm:inline">英雄职业殿堂 (HERO CLASS SANCTUARY)</span>
+                <span className="sm:hidden">英雄职业殿堂</span>
               </h2>
-              <p className="text-xs text-stone-400">
+              <p className="hidden sm:block text-xs text-stone-400">
                 切换专精职业以获取独有被动天赋、专属攻击倍率与定制起始神兵
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-800 hover:text-white transition-colors"
+            className="touch-btn rounded-lg p-2 text-stone-400 hover:bg-stone-800 hover:text-white transition-colors"
           >
             <X className="h-5 w-5" />
           </button>

@@ -144,35 +144,36 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   const inspectedItem = activeInspectedItem && stillOwned ? activeInspectedItem : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-6xl rounded-xl border-2 border-stone-700 bg-gradient-to-b from-stone-900 to-stone-950 p-4 shadow-2xl text-stone-100 flex flex-col gap-3 max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm p-2 sm:items-center sm:p-4">
+      <div className="relative w-full max-w-6xl rounded-xl border-2 border-stone-700 bg-gradient-to-b from-stone-900 to-stone-950 p-3 sm:p-4 shadow-2xl text-stone-100 flex flex-col gap-3 max-h-[94vh] sm:max-h-[92vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-stone-800 pb-2.5">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">⚔️</span>
+        <div className="flex items-center justify-between border-b border-stone-800 pb-2.5 safe-top">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-xl sm:text-2xl">⚔️</span>
             <div>
-              <h2 className="text-lg font-bold font-cinzel text-amber-300">
-                英雄装备与物品栏 (Character & Inventory)
+              <h2 className="text-base sm:text-lg font-bold font-cinzel text-amber-300">
+                英雄装备与物品栏
               </h2>
-              <p className="text-[11px] text-stone-400">
+              <p className="hidden sm:block text-[11px] text-stone-400">
                 鼠标悬停物品可即时对比属性增减，主副手武器效果根据职业属性实时修正
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg border border-stone-700 bg-stone-800 p-1.5 text-stone-400 hover:text-white hover:bg-stone-700"
+            className="touch-btn rounded-lg border border-stone-700 bg-stone-800 p-2 text-stone-400 hover:text-white hover:bg-stone-700"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
           {/* Left Column: Equipment Slots (compact 3x2 grid) & Set Bonuses */}
           <div className="lg:col-span-3 flex flex-col gap-2">
             <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <Shield className="h-3.5 w-3.5" />
-              已穿戴（双击卸下）
+              <span className="hidden sm:inline">已穿戴（双击卸下）</span>
+              <span className="sm:hidden">已穿戴</span>
             </h3>
             <div className="grid grid-cols-3 gap-1.5">
               {renderSlot('weapon', '主手武器', player.equipment.weapon)}
@@ -274,8 +275,8 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
               <span className="text-[10px] text-stone-400">悬停查看对比</span>
             </div>
 
-            {/* Inventory Grid: 5-col 大格 + 稀有度光效 */}
-            <div className="grid grid-cols-5 gap-2 p-2.5 rounded-lg border border-stone-800 bg-[radial-gradient(ellipse_at_top,rgba(30,41,59,0.5),rgba(2,6,23,0.9))]">
+            {/* Inventory Grid: 手机 4 列 / ≥sm 5 列 大格 + 稀有度光效 */}
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-lg border border-stone-800 bg-[radial-gradient(ellipse_at_top,rgba(30,41,59,0.5),rgba(2,6,23,0.9))]">
               {player.inventory.map((item) => {
                 const isSelected = selectedItem?.id === item.id;
                 const isHovered = hoveredItem?.id === item.id;
@@ -332,7 +333,7 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
                 );
               })}
 
-              {Array.from({ length: Math.max(0, 20 - player.inventory.length) }).map((_, i) => (
+              {Array.from({ length: Math.max(0, 24 - player.inventory.length) }).map((_, i) => (
                 <div
                   key={`empty_${i}`}
                   className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-stone-800/60 bg-stone-950/40"

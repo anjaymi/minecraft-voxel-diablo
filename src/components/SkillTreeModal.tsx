@@ -36,7 +36,7 @@ export const SkillTreeModal: React.FC<SkillTreeModalProps> = ({ player, onClose,
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in select-none">
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 animate-fade-in select-none">
       <div className="relative flex h-full max-h-[800px] w-full max-w-5xl flex-col rounded-xl border-2 bg-stone-900 shadow-2xl overflow-hidden" style={{ borderColor: classDef.themeColor }}>
         
         {/* Header */}

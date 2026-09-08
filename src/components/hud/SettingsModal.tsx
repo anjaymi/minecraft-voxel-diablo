@@ -122,11 +122,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm p-2 sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md rounded-xl border-2 border-stone-700 bg-stone-900 text-stone-100 shadow-2xl flex flex-col max-h-[88vh]"
+        className="relative w-full max-w-md rounded-xl border-2 border-stone-700 bg-stone-900 text-stone-100 shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] safe-bottom"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
