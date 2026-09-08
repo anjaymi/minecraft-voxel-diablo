@@ -40,3 +40,13 @@ body,
   transform: scale(0.93);
   filter: brightness(1.25);
 }
+
+/* 竖屏提示：仅小屏+竖屏显示，建议横屏游玩 */
+.orientation-hint {
+  display: none;
+}
+@media (orientation: portrait) and (max-width: 767px) {
+  .orientation-hint {
+    display: flex;
+  }
+}

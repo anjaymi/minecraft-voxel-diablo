@@ -1,37 +1,52 @@
 import React, { useRef, useState, useCallback } from 'react';
+import { Player } from '../types';
+import { SKILLS } from '../engine/skillSystem';
 
 interface TouchControlsProps {
-  onMove: (x: number, y: number) => void; // 摇杆方向（已归一化，模长 0~1）
+  player: Player;
+  onMove: (x: number, y: number) => void;
+  onPrimaryDown: () => void;
+  onPrimaryUp: () => void;
+  onSecondaryDown: () => void;
+  onSecondaryUp: () => void;
+  onSkill: (slot: '1' | '2' | '3' | '4') => void;
+  onPotion: () => void;
   onDash: () => void;
   onInteract: () => void;
-  onSecondaryAttack: (down: boolean) => void; // 副手特技按住/松开
 }
 
 /**
- * TouchControls — 移动端虚拟操控层（仅触屏设备渲染）。
+ * TouchControls — 暗黑不朽风格移动操控层（仅触屏/小屏渲染）。
  *
- * 左下：浮动摇杆（触点即中心，拖动控制方向，松开回中）；
- * 右下：技能圆钮（冲刺 / 交互 / 副手特技）。
- * 全部 pointer-events-auto，不遮挡画布其余区域。
+ * 布局范式（参考 DI 手游横版）：
+ *  - 左下：固定半透明摇杆（外圈+内杆，拖动控制方向，松开回中）；
+ *  - 右下：大普攻按钮 + 环绕技能弧（副手/1-4 技能/药水），
+ *    冷却用数字角标显示；
+ *  - 摇杆上方：交互按钮（E）与冲刺。
  */
 export const TouchControls: React.FC<TouchControlsProps> = ({
+  player,
   onMove,
+  onPrimaryDown,
+  onPrimaryUp,
+  onSecondaryDown,
+  onSecondaryUp,
+  onSkill,
+  onPotion,
   onDash,
   onInteract,
-  onSecondaryAttack,
 }) => {
-  const [stick, setStick] = useState<{ active: boolean; ox: number; oy: number; dx: number; dy: number }>({
-    active: false, ox: 0, oy: 0, dx: 0, dy: 0,
-  });
+  const [knob, setKnob] = useState<{ dx: number; dy: number; active: boolean }>({ dx: 0, dy: 0, active: false });
   const stickIdRef = useRef<number | null>(null);
-  const STICK_R = 52; // 摇杆最大行程（像素）
+  const STICK_R = 44; // 内杆最大行程（像素）
 
+  // ===== 摇杆（固定位置，触点须落在摇杆区内） =====
   const handleStickStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const t = e.changedTouches[0];
     if (!t || stickIdRef.current !== null) return;
     e.preventDefault();
     stickIdRef.current = t.identifier;
-    setStick({ active: true, ox: t.clientX, oy: t.clientY, dx: 0, dy: 0 });
+    setKnob({ dx: 0, dy: 0, active: true });
   }, []);
 
   const handleStickMove = useCallback(
@@ -42,23 +57,22 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       if (!t) return;
       e.preventDefault();
 
-      let dx = t.clientX - stick.ox;
-      let dy = t.clientY - stick.oy;
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      let dx = t.clientX - cx;
+      let dy = t.clientY - cy;
       const len = Math.hypot(dx, dy);
       if (len > STICK_R) {
         dx = (dx / len) * STICK_R;
         dy = (dy / len) * STICK_R;
       }
-      setStick((s) => ({ ...s, dx, dy }));
-      // 死区 0.18，避免误触
+      setKnob((s) => ({ ...s, dx, dy }));
       const nLen = Math.hypot(dx, dy) / STICK_R;
-      if (nLen < 0.18) {
-        onMove(0, 0);
-      } else {
-        onMove(dx / STICK_R, dy / STICK_R);
-      }
+      if (nLen < 0.18) onMove(0, 0);
+      else onMove(dx / STICK_R, dy / STICK_R);
     },
-    [stick.ox, stick.oy, onMove]
+    [onMove]
   );
 
   const handleStickEnd = useCallback(
@@ -69,75 +83,146 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       if (!t) return;
       e.preventDefault();
       stickIdRef.current = null;
-      setStick({ active: false, ox: 0, oy: 0, dx: 0, dy: 0 });
+      setKnob({ dx: 0, dy: 0, active: false });
       onMove(0, 0);
     },
     [onMove]
   );
 
+  // ===== 冷却读取（与桌面热键条同源） =====
+  const cd = (slot: string, fallbackId?: string): number => {
+    const skillId = player.activeSkills[slot];
+    if (skillId) return player.skillCooldowns[skillId] || 0;
+    if (fallbackId) return player.skillCooldowns[fallbackId] || 0;
+    return 0;
+  };
+  const skillSlot = (slot: '1' | '2' | '3' | '4') => {
+    const skillId = player.activeSkills[slot];
+    return skillId ? SKILLS[skillId] : null;
+  };
+
+  /** 圆形触控按钮：图标 + 冷却角标 */
+  const TouchBtn: React.FC<{
+    icon: React.ReactNode;
+    size: number;
+    onPress: () => void;
+    onRelease?: () => void;
+    cooldown?: number;
+    label?: string;
+    className?: string;
+    style?: React.CSSProperties;
+  }> = ({ icon, size, onPress, onRelease, cooldown, label, className = '', style }) => (
+    <button
+      className={`touch-btn relative flex items-center justify-center rounded-full border-2 select-none ${className}`}
+      style={{ width: size, height: size, ...style }}
+      onTouchStart={(e) => {
+        e.preventDefault();
+        onPress();
+      }}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+        onRelease?.();
+      }}
+    >
+      <span className="pointer-events-none" style={{ fontSize: size * 0.42 }}>{icon}</span>
+      {!!cooldown && cooldown > 0 && (
+        <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/70 font-mono text-sm font-black text-cyan-300 pointer-events-none">
+          {cooldown.toFixed(1)}
+        </span>
+      )}
+      {label && (
+        <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] text-stone-300/80 pointer-events-none">
+          {label}
+        </span>
+      )}
+    </button>
+  );
+
   return (
     <div className="pointer-events-none absolute inset-0 z-40 select-none md:hidden">
-      {/* 左下浮动摇杆区（半屏高触发带） */}
+      {/* ===== 左下：固定摇杆 ===== */}
       <div
-        className="pointer-events-auto absolute bottom-0 left-0 h-[45%] w-[42%]"
+        className="pointer-events-auto absolute bottom-6 left-6 flex h-32 w-32 items-center justify-center rounded-full border-2 border-white/20 bg-stone-950/30 backdrop-blur-[2px] safe-left safe-bottom"
         onTouchStart={handleStickStart}
         onTouchMove={handleStickMove}
         onTouchEnd={handleStickEnd}
         onTouchCancel={handleStickEnd}
       >
-        {stick.active ? (
-          <div className="absolute" style={{ left: stick.ox, top: stick.oy, transform: 'translate(-50%, -50%)' }}>
-            <div className="h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/25 bg-stone-900/30 absolute" />
-            <div
-              className="h-14 w-14 rounded-full border-2 border-amber-300/80 bg-stone-800/80 shadow-[0_0_16px_rgba(251,191,36,0.4)]"
-              style={{ transform: `translate(calc(-50% + ${stick.dx}px), calc(-50% + ${stick.dy}px))` }}
-            />
-          </div>
-        ) : (
-          <div className="absolute bottom-8 left-8 flex h-24 w-24 items-center justify-center rounded-full border-2 border-white/15 bg-stone-900/25 backdrop-blur-[2px]">
-            <span className="text-[10px] font-bold text-stone-400/70">摇杆</span>
-          </div>
-        )}
+        {/* 十字方向提示 */}
+        <div className="absolute h-full w-full pointer-events-none opacity-20">
+          <div className="absolute left-1/2 top-2 h-3 w-0.5 -translate-x-1/2 bg-white" />
+          <div className="absolute left-1/2 bottom-2 h-3 w-0.5 -translate-x-1/2 bg-white" />
+          <div className="absolute top-1/2 left-2 h-0.5 w-3 -translate-y-1/2 bg-white" />
+          <div className="absolute top-1/2 right-2 h-0.5 w-3 -translate-y-1/2 bg-white" />
+        </div>
+        {/* 内杆 */}
+        <div
+          className={`h-16 w-16 rounded-full border-2 shadow-lg transition-colors ${
+            knob.active ? 'border-amber-300/90 bg-stone-700/90' : 'border-white/40 bg-stone-800/70'
+          }`}
+          style={{ transform: `translate(${knob.dx}px, ${knob.dy}px)` }}
+        />
       </div>
 
-      {/* 右下技能按钮簇 */}
-      <div className="pointer-events-auto absolute bottom-8 right-5 flex flex-col items-end gap-3 safe-right safe-bottom">
-        {/* 副手特技（按住） */}
-        <button
-          className="touch-btn flex h-14 w-14 items-center justify-center rounded-full border-2 border-sky-400/70 bg-sky-950/70 text-xl shadow-[0_0_14px_rgba(56,189,248,0.35)] active:bg-sky-900/80"
-          onTouchStart={(e) => {
-            e.preventDefault();
-            onSecondaryAttack(true);
-          }}
-          onTouchEnd={(e) => {
-            e.preventDefault();
-            onSecondaryAttack(false);
-          }}
-        >
-          ⚡
-        </button>
-        <div className="flex items-end gap-3">
-          {/* 交互 */}
-          <button
-            className="touch-btn flex h-14 w-14 items-center justify-center rounded-full border-2 border-emerald-400/70 bg-emerald-950/70 text-xl font-black text-emerald-300 shadow-[0_0_14px_rgba(52,211,153,0.35)]"
-            onTouchStart={(e) => {
-              e.preventDefault();
-              onInteract();
-            }}
-          >
-            E
-          </button>
-          {/* 冲刺 */}
-          <button
-            className="touch-btn flex h-16 w-16 items-center justify-center rounded-full border-2 border-amber-400/80 bg-amber-950/70 text-2xl shadow-[0_0_16px_rgba(251,191,36,0.4)]"
-            onTouchStart={(e) => {
-              e.preventDefault();
-              onDash();
-            }}
-          >
-            💨
-          </button>
-        </div>
+      {/* ===== 摇杆上方：交互 / 冲刺 ===== */}
+      <div className="pointer-events-auto absolute left-8 flex flex-col gap-3" style={{ bottom: '170px' }}>
+        <TouchBtn icon="E" size={52} onPress={onInteract} className="border-emerald-400/70 bg-emerald-950/70 text-emerald-300 font-black shadow-[0_0_12px_rgba(52,211,153,0.35)]" label="交互" />
+        <TouchBtn icon="💨" size={52} onPress={onDash} cooldown={player.dashCooldown} className="border-amber-400/70 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]" label="冲刺" />
+      </div>
+
+      {/* ===== 右下：DI 风格技能轮盘 ===== */}
+      <div className="pointer-events-auto absolute bottom-5 right-5 safe-right safe-bottom" style={{ width: 240, height: 200 }}>
+        {/* 环绕弧：副手 + 技能1-4（绕大按钮左上方弧线排布） */}
+        <TouchBtn
+          icon="⚡"
+          size={54}
+          onPress={onSecondaryDown}
+          onRelease={onSecondaryUp}
+          className="absolute border-sky-400/70 bg-sky-950/70 shadow-[0_0_12px_rgba(56,189,248,0.35)]"
+          style={{ right: 132, bottom: 96 }}
+        />
+        {(['1', '2', '3', '4'] as const).map((slot, i) => {
+          const skill = skillSlot(slot);
+          const fallbackIcons = ['💣', '🍎', '👁️', player.equipment.offhand?.subType === 'shield' ? '🛡️' : '🌪️'];
+          const fallbackIds = ['tnt_toss', 'golden_apple', 'ender_pearl', player.equipment.offhand?.subType === 'shield' ? 'shield_bash' : 'whirlwind'];
+          const angles = [200, 240, 280, 320]; // 弧线角度（度，右下原点系）
+          const arcR = 104;
+          const rad = (angles[i] * Math.PI) / 180;
+          const x = 190 + Math.cos(rad) * arcR * 1.05;
+          const y = 128 + Math.sin(rad) * arcR * 0.72;
+          return (
+            <TouchBtn
+              key={slot}
+              icon={skill ? skill.icon : fallbackIcons[i]}
+              size={54}
+              onPress={() => onSkill(slot)}
+              cooldown={cd(slot, fallbackIds[i])}
+              className={`absolute ${skill ? 'border-amber-400/80 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]' : 'border-stone-500/70 bg-stone-800/80'}`}
+              style={{ right: 240 - x, bottom: y - 64 }}
+            />
+          );
+        })}
+
+        {/* 药水（大按钮左侧） */}
+        <TouchBtn
+          icon="🧪"
+          size={58}
+          onPress={onPotion}
+          cooldown={cd('q', 'potion')}
+          className="absolute border-rose-400/70 bg-rose-950/70 shadow-[0_0_12px_rgba(251,113,133,0.35)]"
+          style={{ right: 150, bottom: 22 }}
+          label={`x${player.stats.potions}`}
+        />
+
+        {/* 大普攻按钮（最右下） */}
+        <TouchBtn
+          icon="⚔️"
+          size={84}
+          onPress={onPrimaryDown}
+          onRelease={onPrimaryUp}
+          className="absolute border-amber-300/90 bg-gradient-to-b from-amber-800/80 to-stone-900/90 shadow-[0_0_20px_rgba(251,191,36,0.45)]"
+          style={{ right: 12, bottom: 18 }}
+        />
       </div>
     </div>
   );

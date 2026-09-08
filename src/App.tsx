@@ -560,18 +560,33 @@ export default function App() {
       {/* Giant boss intro banner */}
       <BossIntroBanner banner={bossIntro} />
 
-      {/* 移动端虚拟摇杆与技能按钮（md 以下才显示；引擎提供摇杆通道） */}
-      {eng && (
+      {/* 竖屏时提示横屏游玩（CSS 控制只在手机竖屏显示） */}
+      <div className="orientation-hint pointer-events-none absolute left-1/2 top-1/2 z-[70] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 rounded-xl border border-amber-600/50 bg-stone-950/90 px-6 py-4 text-center">
+        <span className="text-3xl animate-pulse">📱↻</span>
+        <p className="text-sm font-bold text-amber-300">建议横屏游玩</p>
+        <p className="text-[11px] text-stone-400">旋转设备获得完整视野与操控布局</p>
+      </div>
+
+      {/* 移动端虚拟摇杆与技能轮盘（暗黑不朽风格，md 以下才显示） */}
+      {eng && player && (
         <TouchControls
+          player={player}
           onMove={(x, y) => {
             eng.touchMoveX = x;
             eng.touchMoveY = y;
           }}
+          onPrimaryDown={() => eng.onMouseDown()}
+          onPrimaryUp={() => eng.onMouseUp()}
+          onSecondaryDown={() => {
+            eng.isRightMouseDown = true;
+          }}
+          onSecondaryUp={() => {
+            eng.isRightMouseDown = false;
+          }}
+          onSkill={(slot) => eng.useHotkey(slot)}
+          onPotion={() => eng.useHotkey('q')}
           onDash={() => eng.playerDash()}
           onInteract={() => eng.tryInteract()}
-          onSecondaryAttack={(down) => {
-            eng.isRightMouseDown = down;
-          }}
         />
       )}
 

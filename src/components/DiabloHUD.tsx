@@ -127,8 +127,8 @@ export const DiabloHUD: React.FC<DiabloHUDProps> = ({
           {/* Dynamic Combat Feedback Ribbon */}
           <CombatFeedbackBar player={player} />
 
-          {/* Skill / Item Slots */}
-          <div className="flex items-center gap-1 sm:gap-2 mb-1.5 touch-btn">
+          {/* Skill / Item Slots（手机端由触控轮盘接管，sm 以下隐藏） */}
+          <div className="hidden sm:flex items-center gap-2 mb-1.5 touch-btn">
             {/* Slot 1: Primary Attack */}
             <div className="group relative flex flex-col items-center">
               <div
