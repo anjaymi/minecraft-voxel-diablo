@@ -50,3 +50,6 @@ body,
     display: flex;
   }
 }
+
+/* 矮屏变体（横屏手机高度常 <560px）：与宽度断点无关的紧凑化 */
+@custom-variant short (@media (max-height: 560px));
