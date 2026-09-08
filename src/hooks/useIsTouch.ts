@@ -10,9 +10,11 @@ import { useEffect, useState } from 'react';
 function detectTouch(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    return window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+    // 只看"主指针是否为触摸"：带触摸屏的笔记本/一体机 maxTouchPoints>0
+    // 但主输入仍是鼠标（pointer: fine），不能按移动布局渲染。
+    return window.matchMedia('(pointer: coarse)').matches;
   } catch {
-    return 'ontouchstart' in window;
+    return false;
   }
 }
 
