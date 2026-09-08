@@ -63,7 +63,7 @@ export const AttackMotionConfigModal: React.FC<AttackMotionConfigModalProps> = (
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl rounded-xl border border-stone-700 bg-stone-900/95 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-2xl rounded-xl border border-stone-700 bg-stone-900/95 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] max-h-[90dvh]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-800 px-6 py-4 bg-stone-950/70">
           <div className="flex items-center gap-3">

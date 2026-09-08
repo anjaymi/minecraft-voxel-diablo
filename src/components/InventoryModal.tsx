@@ -8,6 +8,7 @@ import { ItemComparisonTooltip } from './ItemComparisonTooltip';
 import { WeaponEffectVisualizer } from './WeaponEffectVisualizer';
 import { PaperDoll } from './inventory/PaperDoll';
 import { CharacterStatsPanel } from './inventory/CharacterStatsPanel';
+import { useIsTouch } from '../hooks/useIsTouch';
 import { X, Shield, Sword, Sparkles, Footprints, HardHat, CircleDot, Zap, Swords, User } from 'lucide-react';
 
 interface InventoryModalProps {
@@ -32,6 +33,12 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<EquipmentSlot | null>(null);
   const [hoveredItem, setHoveredItem] = useState<Item | null>(null);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const isTouch = useIsTouch();
+
+  // PC：对比卡用固定浮层跟随鼠标——文档流内出现/消失会改变布局高度，
+  // 引发滚动与 hover 丢失的循环，表现为整个背包窗口晃动。
+  const trackMouse = (e: React.MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
 
   // 手动双击检测（350ms 内同格两次点击 = 快速装备/卸下，不依赖原生 dblclick 事件）
   const lastGridClickRef = useRef<{ id: string; t: number }>({ id: '', t: 0 });
@@ -144,9 +151,12 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
   const inspectedItem = activeInspectedItem && stillOwned ? activeInspectedItem : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4"
+      onMouseMove={trackMouse}
+    >
       {/* 手机端：DI 式全屏装备界面；sm 以上恢复居中卡片 */}
-      <div className="relative flex w-full flex-col gap-2 overflow-y-auto bg-gradient-to-b from-stone-900 to-stone-950 p-2 text-stone-100 sm:gap-3 sm:rounded-xl sm:border-2 sm:border-stone-700 sm:p-4 sm:shadow-2xl sm:max-h-[94vh]">
+      <div className="relative flex w-full flex-col gap-2 overflow-y-auto bg-gradient-to-b from-stone-900 to-stone-950 p-2 text-stone-100 sm:gap-3 sm:rounded-xl sm:border-2 sm:border-stone-700 sm:p-4 sm:shadow-2xl sm:max-h-[94vh] max-h-[94dvh]">
         {/* Header：标题 + 货币 + 关闭 */}
         <div className="flex items-center justify-between border-b border-stone-800 pb-2 safe-top">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -352,29 +362,49 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
               ))}
             </div>
 
-            {/* Hover Comparison Tooltip Popup */}
-            {inspectedItem ? (
-              <ItemComparisonTooltip
-                hoveredItem={inspectedItem}
-                player={player}
-                onEquip={(item) => {
-                  onEquipItem(item);
-                  setSelectedItem(null);
-                  setHoveredItem(null);
-                }}
-                onSell={(item) => {
-                  onSellItem(item);
-                  setSelectedItem(null);
-                  setHoveredItem(null);
-                }}
-              />
+            {/* 流内详情：仅触摸设备（点选出现，无 hover 抖动问题） */}
+            {isTouch ? (
+              inspectedItem ? (
+                <ItemComparisonTooltip
+                  hoveredItem={inspectedItem}
+                  player={player}
+                  onEquip={(item) => {
+                    onEquipItem(item);
+                    setSelectedItem(null);
+                    setHoveredItem(null);
+                  }}
+                  onSell={(item) => {
+                    onSellItem(item);
+                    setSelectedItem(null);
+                    setHoveredItem(null);
+                  }}
+                />
+              ) : (
+                <div className="rounded-lg border border-dashed border-stone-800 bg-stone-950/40 p-4 text-center text-xs text-stone-500 italic">
+                  💡 点选物品查看属性对比 · 双击 / 右键 = 快速装备
+                </div>
+              )
             ) : (
+              /* PC：流内占位保持常显（高度恒定），对比卡走鼠标浮层，杜绝窗口晃动 */
               <div className="rounded-lg border border-dashed border-stone-800 bg-stone-950/40 p-4 text-center text-xs text-stone-500 italic">
                 💡 悬停查看属性对比 · <span className="text-amber-400 font-bold">双击 / 右键 = 快速装备</span> · 双击已穿戴 = 卸下
               </div>
             )}
           </div>
         </div>
+
+        {/* PC：固定定位对比浮层（跟随鼠标，不参与布局） */}
+        {!isTouch && inspectedItem && (
+          <div
+            className="pointer-events-none fixed z-[60] w-80"
+            style={{
+              left: Math.min(mousePos.x + 18, window.innerWidth - 340),
+              top: Math.min(mousePos.y + 12, window.innerHeight - 430),
+            }}
+          >
+            <ItemComparisonTooltip hoveredItem={inspectedItem} player={player} />
+          </div>
+        )}
       </div>
     </div>
   );

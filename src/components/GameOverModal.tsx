@@ -32,7 +32,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in select-none safe-top safe-bottom">
-      <div className="relative w-full max-w-md rounded-2xl border-2 border-stone-700 bg-gradient-to-b from-stone-900 to-stone-950 p-6 sm:p-8 shadow-2xl text-stone-100 flex flex-col items-center text-center max-h-[92vh] overflow-y-auto">
+      <div className="relative w-full max-w-md rounded-2xl border-2 border-stone-700 bg-gradient-to-b from-stone-900 to-stone-950 p-6 sm:p-8 shadow-2xl text-stone-100 flex flex-col items-center text-center max-h-[92vh] max-h-[92dvh] overflow-y-auto">
         {/* Banner Icon */}
         <div
           className={`flex h-20 w-20 items-center justify-center rounded-3xl border-2 mb-4 shadow-xl ${

@@ -46,7 +46,7 @@ export const ChibiPsdStandardModal: React.FC<ChibiPsdStandardModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5">
-      <div className="w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl border border-stone-700 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden">
+      <div className="w-full max-w-4xl max-h-[92vh] max-h-[92dvh] flex flex-col rounded-2xl border border-stone-700 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-800 bg-stone-950/90 px-6 py-4">
           <div className="flex items-center gap-3">

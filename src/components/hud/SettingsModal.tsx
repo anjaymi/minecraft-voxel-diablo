@@ -126,7 +126,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md rounded-xl border-2 border-stone-700 bg-stone-900 text-stone-100 shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] safe-bottom"
+        className="relative w-full max-w-md rounded-xl border-2 border-stone-700 bg-stone-900 text-stone-100 shadow-2xl flex flex-col max-h-[92vh] max-h-[92dvh] sm:max-h-[88vh] max-h-[88dvh] safe-bottom"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

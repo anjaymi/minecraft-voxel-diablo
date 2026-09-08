@@ -29,7 +29,7 @@ export const ClassSelectModal: React.FC<ClassSelectModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-md p-2 sm:items-center sm:p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl rounded-2xl border-2 border-stone-600 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[92vh]">
+      <div className="relative w-full max-w-4xl rounded-2xl border-2 border-stone-600 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] max-h-[94dvh] sm:max-h-[92vh] max-h-[92dvh]">
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-stone-700 bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 px-3 sm:px-6 py-3 sm:py-4 safe-top">
           <div className="flex items-center gap-2 sm:gap-3">

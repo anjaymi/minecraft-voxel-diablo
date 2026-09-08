@@ -92,7 +92,7 @@ export const CustomSkinModal: React.FC<CustomSkinModalProps> = ({ onClose, onOpe
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4">
-      <div className="relative flex max-h-[94vh] w-full max-w-4xl flex-col rounded-2xl border-2 border-amber-600/60 bg-stone-950 p-4 sm:p-6 text-stone-200 shadow-[0_16px_40px_rgba(0,0,0,0.9)] overflow-hidden">
+      <div className="relative flex max-h-[94vh] max-h-[94dvh] w-full max-w-4xl flex-col rounded-2xl border-2 border-amber-600/60 bg-stone-950 p-4 sm:p-6 text-stone-200 shadow-[0_16px_40px_rgba(0,0,0,0.9)] overflow-hidden">
         {/* Toast Alert Feedback */}
         {toastMessage && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full border border-emerald-500/80 bg-emerald-950/95 px-4 py-1.5 text-xs font-bold text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.5)] transition-all animate-bounce">

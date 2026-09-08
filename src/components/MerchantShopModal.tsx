@@ -84,7 +84,7 @@ export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, on
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-sm p-2 sm:items-center sm:p-4" onClick={onClose}>
       <div
-        className="relative flex w-full max-w-4xl max-h-[94vh] sm:max-h-[90vh] flex-col overflow-hidden rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-stone-100"
+        className="relative flex w-full max-w-4xl max-h-[94vh] max-h-[94dvh] sm:max-h-[90vh] max-h-[90dvh] flex-col overflow-hidden rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-stone-100"
         style={{ background: 'radial-gradient(ellipse at top, #33291f 0%, #221a12 45%, #181209 100%)' }}
         onClick={(e) => e.stopPropagation()}
       >

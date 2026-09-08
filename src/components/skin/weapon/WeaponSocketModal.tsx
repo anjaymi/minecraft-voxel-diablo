@@ -75,7 +75,7 @@ export const WeaponSocketModal: React.FC<WeaponSocketModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
-      <div className="relative flex max-h-[96vh] w-full max-w-4xl flex-col rounded-2xl border-2 border-amber-500/70 bg-stone-950 p-4 sm:p-5 text-stone-200 shadow-[0_20px_50px_rgba(0,0,0,0.95)] overflow-hidden">
+      <div className="relative flex max-h-[96vh] max-h-[96dvh] w-full max-w-4xl flex-col rounded-2xl border-2 border-amber-500/70 bg-stone-950 p-4 sm:p-5 text-stone-200 shadow-[0_20px_50px_rgba(0,0,0,0.95)] overflow-hidden">
         {/* Toast Alert Feedback */}
         {toastMessage && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full border border-emerald-500/80 bg-emerald-950/95 px-4 py-1.5 text-xs font-bold text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.5)] animate-bounce">
@@ -151,7 +151,7 @@ export const WeaponSocketModal: React.FC<WeaponSocketModalProps> = ({
         )}
 
         {/* Main Content: Left Preview Grid, Right Sliders & Layering */}
-        <div className="mt-3 grid grid-cols-1 md:grid-cols-12 gap-3.5 overflow-y-auto max-h-[calc(96vh-170px)] pr-1">
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-12 gap-3.5 overflow-y-auto max-h-[calc(96vh-170px)] max-h-[calc(96dvh-170px)] pr-1">
           {/* Left Column (5 cols): Canvas Preview & Quick Presets */}
           <div className="md:col-span-5 flex flex-col gap-3">
             <WeaponSocketCanvasPreview config={config} player={player} />

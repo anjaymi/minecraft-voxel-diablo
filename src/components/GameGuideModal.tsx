@@ -17,7 +17,7 @@ export const GameGuideModal: React.FC<GameGuideModalProps> = ({ isOpen, onClose 
       onClick={(e) => e.stopPropagation()}
     >
       <div
-        className="relative w-full max-w-lg rounded-xl border-2 border-stone-700 bg-stone-900 p-4 sm:p-6 text-stone-200 shadow-2xl max-h-[92vh] overflow-y-auto safe-top safe-bottom"
+        className="relative w-full max-w-lg rounded-xl border-2 border-stone-700 bg-stone-900 p-4 sm:p-6 text-stone-200 shadow-2xl max-h-[92vh] max-h-[92dvh] overflow-y-auto safe-top safe-bottom"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3">

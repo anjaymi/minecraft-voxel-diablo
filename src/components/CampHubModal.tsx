@@ -19,7 +19,7 @@ export const CampHubModal: React.FC<CampHubModalProps> = ({ player, onClose, onE
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md p-2 sm:items-center sm:p-4 animate-fade-in">
-      <div className="relative w-full max-w-3xl rounded-xl border-2 border-amber-600/70 bg-gradient-to-b from-stone-900 to-stone-950 p-4 sm:p-6 shadow-2xl text-stone-100 flex flex-col gap-4 sm:gap-5 max-h-[94vh] sm:max-h-[90vh] overflow-y-auto safe-top safe-bottom">
+      <div className="relative w-full max-w-3xl rounded-xl border-2 border-amber-600/70 bg-gradient-to-b from-stone-900 to-stone-950 p-4 sm:p-6 shadow-2xl text-stone-100 flex flex-col gap-4 sm:gap-5 max-h-[94vh] max-h-[94dvh] sm:max-h-[90vh] max-h-[90dvh] overflow-y-auto safe-top safe-bottom">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-800 pb-3">
           <div className="flex items-center gap-3">
