@@ -20,7 +20,7 @@ npx vite build   # 产出 dist/（已配置相对路径 base，可直接托管�
 
 push 到 main 自动发布：
 
-👉 https://<你的用户名>.github.io/<仓库名>/
+👉 https://anjaymi.github.io/minecraft-voxel-diablo/
 
 首次部署步骤：
 
