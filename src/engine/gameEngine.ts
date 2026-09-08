@@ -598,12 +598,16 @@ export class GameEngine {
     // 0. Update Screen Shake Decay & High-Frequency Screen Shudder
     if (this.shakeTimer > 0) {
       this.shakeTimer -= dt;
-      const trauma = Math.min(Math.max(0, this.shakeTimer * this.shakeIntensity * 16), 6);
+      // 抖动强度随震动结束清零：shakeIntensity 历史累积（Math.max 只增不减）
+      // 会让后续轻微命中也按历史峰值抖动，表现为"角色一直一抖一抖像受击"。
+      const trauma = Math.min(Math.max(0, this.shakeTimer * this.shakeIntensity * 4), 0.35);
       this.screenShakeOffsetX = (Math.random() - 0.5) * trauma * 0.9;
       this.screenShakeOffsetY = (Math.random() - 0.5) * trauma * 0.6;
+      if (this.shakeTimer <= 0) this.shakeIntensity = 0;
     } else {
       this.screenShakeOffsetX = 0;
       this.screenShakeOffsetY = 0;
+      this.shakeIntensity = 0;
     }
 
     // 0.5 Hit Stop (Frame Freeze): Micro-pause on heavy melee/skill impact
@@ -2308,8 +2312,10 @@ export class GameEngine {
     enemy.hitTimer = 0.14;
     soundManager.playHit();
 
-    // Trigger rapid screen shake & hitStop on monster damage
-    this.triggerHitStop(isCrit || isBackstab ? 0.08 : 0.045, isCrit || isBackstab ? 0.45 : 0.25);
+    // 打击顿帧（hitStop）保留打击感，但不再驱动屏幕抖动：
+    // 主动攻击命中时若整屏抖动，角色看起来像在持续播放受击动效。
+    // 屏幕抖动只留给真正的受击/爆炸事件（damagePlayer / TNT 等）。
+    this.triggerHitStop(isCrit || isBackstab ? 0.08 : 0.045, 0);
 
     const hasFire = element === 'fire' || p.enchantments.some((e) => e.id === 'fire_aspect');
     vfxSystem.spawnHitSparks(enemy.x, enemy.y, enemy.z, isCrit, hasFire);
