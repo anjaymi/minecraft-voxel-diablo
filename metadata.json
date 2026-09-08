@@ -1,0 +1,6 @@
+{
+  "name": "方块暗黑破坏神 (Minecraft Voxel Diablo)",
+  "description": "2.5D等距视角的我的世界风格动作肉鸽游戏，融合暗黑破坏神式砍杀、战利品掉落、地牢探险与装备构筑。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
