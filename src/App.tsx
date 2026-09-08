@@ -9,6 +9,7 @@ import { GameTopBarControls } from './components/hud/GameTopBarControls';
 import { SettingsModal } from './components/hud/SettingsModal';
 import { MerchantShopModal } from './components/MerchantShopModal';
 import { BossIntroBanner } from './components/BossIntroBanner';
+import { TouchControls } from './components/TouchControls';
 import { saveToSlot, loadFromSlot, exportToFile, importFromFile, hasSlot, getSlotSummary } from './engine/save/SaveSystem';
 import { gpuAcceleration } from './engine/perf/exports';
 import { AppModalsContainer } from './components/AppModalsContainer';
@@ -417,6 +418,66 @@ export default function App() {
     }
   };
 
+  // ===== 触屏输入：映射到与鼠标一致的引擎语义 =====
+  // 单指 = 左键（点按移动/攻击，长按蓄力；拖动持续移动）
+  // 双指第二指点下 = 右键（副手特技，按住持续）
+  const handleCanvasTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const eng = engineRef.current;
+    if (!eng || isAnyModalOpenRef.current) return;
+    e.preventDefault();
+
+    const t = e.changedTouches[0];
+    if (!t) return;
+    updateMouseWorldCoord(t.clientX, t.clientY);
+
+    if (e.touches.length === 1) {
+      // 单指：先尝试交互（NPC/宝箱），否则进入攻击/移动
+      if (eng.interactNPC(eng.mouseWorldX, eng.mouseWorldY)) return;
+      eng.onMouseDown();
+      eng.player.targetX = eng.mouseWorldX;
+      eng.player.targetY = eng.mouseWorldY;
+      isDraggingOnCanvasRef.current = true;
+    } else if (e.touches.length === 2) {
+      // 第二根手指 = 副手特技（右键语义）
+      eng.isRightMouseDown = true;
+    }
+  };
+
+  const handleCanvasTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const eng = engineRef.current;
+    if (!eng || isAnyModalOpenRef.current) return;
+    e.preventDefault();
+
+    const t = e.touches[0];
+    if (!t) return;
+    updateMouseWorldCoord(t.clientX, t.clientY);
+
+    if (eng.player.isChargingAttack) {
+      const dx = eng.mouseWorldX - eng.player.x;
+      const dy = eng.mouseWorldY - eng.player.y;
+      if (Math.hypot(dx, dy) > 0.05) {
+        eng.player.facingAngle = Math.atan2(dy, dx);
+      }
+    } else if (isDraggingOnCanvasRef.current && eng.isMouseDown) {
+      eng.player.targetX = eng.mouseWorldX;
+      eng.player.targetY = eng.mouseWorldY;
+    }
+  };
+
+  const handleCanvasTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const eng = engineRef.current;
+    if (!eng) return;
+    e.preventDefault();
+
+    if (e.touches.length === 0) {
+      eng.onMouseUp();
+      isDraggingOnCanvasRef.current = false;
+      eng.isRightMouseDown = false;
+    } else if (e.touches.length === 1) {
+      eng.isRightMouseDown = false;
+    }
+  };
+
   // Global mouse move and release listeners so click-to-move dragging is smooth
   useEffect(() => {
     const handleWindowMouseMove = (e: MouseEvent) => {
@@ -489,12 +550,30 @@ export default function App() {
       <canvas
         ref={canvasRef}
         onMouseDown={handleCanvasMouseDown}
+        onTouchStart={handleCanvasTouchStart}
+        onTouchMove={handleCanvasTouchMove}
+        onTouchEnd={handleCanvasTouchEnd}
         onContextMenu={(e) => e.preventDefault()}
         className="absolute inset-0 cursor-crosshair block w-full h-full"
       />
 
       {/* Giant boss intro banner */}
       <BossIntroBanner banner={bossIntro} />
+
+      {/* 移动端虚拟摇杆与技能按钮（md 以下才显示；引擎提供摇杆通道） */}
+      {eng && (
+        <TouchControls
+          onMove={(x, y) => {
+            eng.touchMoveX = x;
+            eng.touchMoveY = y;
+          }}
+          onDash={() => eng.playerDash()}
+          onInteract={() => eng.tryInteract()}
+          onSecondaryAttack={(down) => {
+            eng.isRightMouseDown = down;
+          }}
+        />
+      )}
 
       {/* Diablo Bottom Action Bar & Health/Mana Globes */}
       {player && eng && (

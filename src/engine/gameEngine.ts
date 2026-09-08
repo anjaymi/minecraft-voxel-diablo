@@ -159,6 +159,9 @@ export class GameEngine {
   public mouseWorldY: number = 0;
   public isMouseDown: boolean = false;
   public isRightMouseDown: boolean = false;
+  /** 虚拟摇杆方向（移动端）：x/y ∈ [-1,1]，非零时覆盖键盘/点击移动 */
+  public touchMoveX: number = 0;
+  public touchMoveY: number = 0;
   /** [E] 交互冷却 */
   private eInteractCooldown: number = 0;
   /** 距上次对敌/受击的游戏时间（法力脱战回复判定） */
@@ -171,6 +174,15 @@ export class GameEngine {
     const z = this.floor?.zoneType;
     if (z === 'dungeon') return DUNGEON_FLOOR_LEVELS[(this.floor?.floorNumber || 1) - 1] ?? 5;
     return ZONE_MONSTER_LEVEL[z] ?? 1;
+  }
+
+  /** 交互入口（[E] 键与移动端交互按钮共用）：就近交互 NPC / 冒险者 */
+  public tryInteract(): void {
+    const target = this.findNearestInteractable();
+    if (target) {
+      this.interactNPC(target.x, target.y);
+      this.eInteractCooldown = 0.6;
+    }
   }
 
   /** 找玩家身边最近的交互对象（城镇 NPC 优先，其次野外冒险者） */
@@ -663,11 +675,7 @@ export class GameEngine {
     // 8.4 [E] 键交互：对最近的 NPC / 冒险者触发对话（键盘流友好）
     if (this.keys['KeyE'] || this.keys['e']) {
       if (this.eInteractCooldown <= 0) {
-        const target = this.findNearestInteractable();
-        if (target) {
-          this.interactNPC(target.x, target.y);
-          this.eInteractCooldown = 0.6;
-        }
+        this.tryInteract();
       }
       this.eInteractCooldown -= dt;
     } else {
@@ -988,6 +996,12 @@ export class GameEngine {
       moveX = screenX + screenY;
       moveY = screenY - screenX;
       // Clear click-to-move target when keyboard is pressed
+      p.targetX = null;
+      p.targetY = null;
+    } else if (Math.abs(this.touchMoveX) > 0.01 || Math.abs(this.touchMoveY) > 0.01) {
+      // 虚拟摇杆（移动端）：同样做屏幕→等距世界方向的换算
+      moveX = this.touchMoveX + this.touchMoveY;
+      moveY = this.touchMoveY - this.touchMoveX;
       p.targetX = null;
       p.targetY = null;
     } else if (p.targetX !== null && p.targetY !== null) {

@@ -165,7 +165,7 @@ export const MiniMap: React.FC<MiniMapProps> = ({ floor, player, enemies, advent
           ref={canvasRef}
           width={isExpanded ? 240 : 130}
           height={isExpanded ? 240 : 130}
-          className="rounded border border-stone-800 bg-stone-900"
+          className="rounded border border-stone-800 bg-stone-900 scale-[0.72] sm:scale-100 origin-top-right"
         />
         <div className="flex justify-between text-[8px] font-mono text-stone-400 px-1 pt-1">
           <span className="text-emerald-400">● 玩家</span>

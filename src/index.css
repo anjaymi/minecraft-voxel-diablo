@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+/* ===== 移动端全屏与触摸基础 ===== */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none; /* 禁止下拉刷新/回弹 */
+  background: #0c0a09;
+}
+
+#game-viewport {
+  touch-action: none; /* 画布手势全部交给游戏逻辑，禁浏览器滚动/缩放 */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 安全区内边距（刘海屏/手势条），供 HUD 使用 */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-left {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.safe-right {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* 移动端按钮：即时按压反馈 */
+.touch-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.touch-btn:active {
+  transform: scale(0.93);
+  filter: brightness(1.25);
+}
