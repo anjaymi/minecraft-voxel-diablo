@@ -9,17 +9,29 @@ interface CampHubModalProps {
   player: Player;
   onClose: () => void;
   onEnchantAdded: (name: string) => void;
+  /** 触摸设备：全屏呈现 */
+  fullscreen?: boolean;
 }
 
-export const CampHubModal: React.FC<CampHubModalProps> = ({ player, onClose, onEnchantAdded }) => {
+export const CampHubModal: React.FC<CampHubModalProps> = ({ player, onClose, onEnchantAdded, fullscreen = false }) => {
   const [activeTab, setActiveTab] = useState<'blacksmith' | 'alchemist' | 'enchanter'>('blacksmith');
   const [, setForceUpdate] = useState(0);
 
   const refreshState = () => setForceUpdate((prev) => prev + 1);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md p-2 sm:items-center sm:p-4 animate-fade-in">
-      <div className="relative w-full max-w-3xl rounded-xl border-2 border-amber-600/70 bg-gradient-to-b from-stone-900 to-stone-950 p-4 sm:p-6 shadow-2xl text-stone-100 flex flex-col gap-4 sm:gap-5 max-h-[94vh] max-h-[94dvh] sm:max-h-[90vh] max-h-[90dvh] overflow-y-auto safe-top safe-bottom">
+    <div
+      className={`fixed inset-0 z-50 flex bg-black/80 backdrop-blur-md animate-fade-in ${
+        fullscreen ? 'items-stretch' : 'items-end justify-center p-2 sm:items-center sm:p-4'
+      }`}
+    >
+      <div
+        className={`relative w-full max-w-3xl bg-gradient-to-b from-stone-900 to-stone-950 shadow-2xl text-stone-100 flex flex-col gap-4 sm:gap-5 overflow-y-auto safe-top safe-bottom ${
+          fullscreen
+            ? 'h-full rounded-none border-0 p-3'
+            : 'max-h-[94dvh] sm:max-h-[90dvh] rounded-xl border-2 border-amber-600/70 p-4 sm:p-6'
+        }`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-800 pb-3">
           <div className="flex items-center gap-3">

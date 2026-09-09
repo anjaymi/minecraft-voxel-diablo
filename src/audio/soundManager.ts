@@ -9,6 +9,8 @@ import { CharacterClassId } from '../types';
 class SoundManager {
   private ctx: AudioContext | null = null;
   public enabled: boolean = true;
+  /** 浏览器自动播放策略：首次用户手势前不创建 AudioContext（避免 console 警告） */
+  private gestureUnlocked: boolean = false;
 
   // Environmental Reverb Bus Nodes
   private masterGain: GainNode | null = null;
@@ -33,7 +35,24 @@ class SoundManager {
   private pulseTimer: number = 0;
   private lastDripTime: number = 0;
 
+  /** 应用启动时调用一次：首个用户手势（点击/触摸/按键）后解锁音频上下文 */
+  public bindGestureUnlock(): void {
+    if (typeof window === 'undefined' || this.gestureUnlocked) return;
+    const unlock = () => {
+      if (this.gestureUnlocked) return;
+      this.gestureUnlocked = true;
+      this.initCtx();
+      if (this.ctx?.state === 'suspended') this.ctx.resume().catch(() => undefined);
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('touchstart', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+  }
+
   private initCtx() {
+    // 首次手势前不创建上下文：pre-gesture 的 new AudioContext() 会触发
+    // Chrome 的自动播放策略警告；此时本就无声，直接跳过（各播放方法均有空守卫）。
+    if (!this.gestureUnlocked && !this.ctx) return;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtx();

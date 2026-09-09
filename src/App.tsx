@@ -104,6 +104,8 @@ export default function App() {
       (window as unknown as { __game: GameEngine }).__game = engine;
     }
     engineRef.current = engine;
+    // 首次用户手势后解锁 AudioContext（浏览器自动播放策略）
+    soundManager.bindGestureUnlock();
 
     const canvas = canvasRef.current;
     if (canvas) {
@@ -659,6 +661,7 @@ export default function App() {
       {isShopOpen && player && (
         <MerchantShopModal
           player={player}
+          fullscreen={isTouch}
           onClose={() => setIsShopOpen(false)}
           onPurchase={(msg, ok) => {
             const eng = engineRef.current;
@@ -741,6 +744,7 @@ export default function App() {
       <AppModalsContainer
         engine={eng}
         player={player}
+        isTouch={isTouch}
         isInventoryOpen={isInventoryOpen}
         setIsInventoryOpen={setIsInventoryOpen}
         isCampOpen={isCampOpen}

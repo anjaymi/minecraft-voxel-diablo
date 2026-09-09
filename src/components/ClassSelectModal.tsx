@@ -8,12 +8,15 @@ interface ClassSelectModalProps {
   currentClassId: CharacterClassId;
   onSelectClass: (classId: CharacterClassId, replaceGear: boolean) => void;
   onClose: () => void;
+  /** 触摸设备：全屏呈现 */
+  fullscreen?: boolean;
 }
 
 export const ClassSelectModal: React.FC<ClassSelectModalProps> = ({
   currentClassId,
   onSelectClass,
   onClose,
+  fullscreen = false,
 }) => {
   const [selectedId, setSelectedId] = useState<CharacterClassId>(currentClassId);
   const [replaceGear, setReplaceGear] = useState<boolean>(true);
@@ -28,8 +31,12 @@ export const ClassSelectModal: React.FC<ClassSelectModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-md p-2 sm:items-center sm:p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl rounded-2xl border-2 border-stone-600 bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] max-h-[94dvh] sm:max-h-[92vh] max-h-[92dvh]">
+    <div
+      className={`fixed inset-0 z-50 flex bg-black/85 backdrop-blur-md animate-in fade-in duration-200 ${
+        fullscreen ? 'items-stretch' : 'items-end justify-center p-2 sm:items-center sm:p-4'
+      }`}
+    >
+      <div className={`relative w-full max-w-4xl bg-stone-900 text-stone-100 shadow-2xl overflow-hidden flex flex-col ${fullscreen ? 'h-full rounded-none border-0' : 'max-h-[94dvh] sm:max-h-[92dvh] rounded-2xl border-2 border-stone-600'}`}>
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-stone-700 bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 px-3 sm:px-6 py-3 sm:py-4 safe-top">
           <div className="flex items-center gap-2 sm:gap-3">

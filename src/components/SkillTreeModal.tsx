@@ -8,9 +8,11 @@ interface SkillTreeModalProps {
   player: Player;
   onClose: () => void;
   onUpdate: () => void;
+  /** 触摸设备：全屏呈现 */
+  fullscreen?: boolean;
 }
 
-export const SkillTreeModal: React.FC<SkillTreeModalProps> = ({ player, onClose, onUpdate }) => {
+export const SkillTreeModal: React.FC<SkillTreeModalProps> = ({ player, onClose, onUpdate, fullscreen = false }) => {
   const [selectedSkill, setSelectedSkill] = React.useState<string | null>(null);
   const [assignMode, setAssignMode] = React.useState<boolean>(false);
 
@@ -36,8 +38,20 @@ export const SkillTreeModal: React.FC<SkillTreeModalProps> = ({ player, onClose,
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 animate-fade-in select-none">
-      <div className="relative flex h-full max-h-[min(800px,94dvh)] w-full max-w-5xl flex-col rounded-xl border-2 bg-stone-900 shadow-2xl overflow-hidden" style={{ borderColor: classDef.themeColor }}>
+    <div
+      className={`absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in select-none ${
+        fullscreen ? 'p-0' : 'p-2 sm:p-4'
+      }`}
+    >
+      <div
+        className="relative flex h-full w-full max-w-5xl flex-col bg-stone-900 shadow-2xl overflow-hidden"
+        style={{
+          borderColor: classDef.themeColor,
+          borderRadius: fullscreen ? 0 : 12,
+          borderWidth: fullscreen ? 0 : 2,
+          maxHeight: fullscreen ? undefined : 'min(800px, 94dvh)',
+        }}
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-stone-800 bg-stone-950 p-4" style={{ borderBottomColor: `${classDef.themeColor}40` }}>

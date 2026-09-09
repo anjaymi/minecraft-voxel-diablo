@@ -16,6 +16,8 @@ import { soundManager } from '../audio/soundManager';
 interface AppModalsContainerProps {
   engine: GameEngine | null;
   player: Player | undefined;
+  /** 触摸设备：主要弹窗全屏呈现 */
+  isTouch?: boolean;
   isInventoryOpen: boolean;
   setIsInventoryOpen: (open: boolean) => void;
   isCampOpen: boolean;
@@ -38,6 +40,7 @@ interface AppModalsContainerProps {
 export const AppModalsContainer: React.FC<AppModalsContainerProps> = ({
   engine,
   player,
+  isTouch = false,
   isInventoryOpen,
   setIsInventoryOpen,
   isCampOpen,
@@ -95,6 +98,7 @@ export const AppModalsContainer: React.FC<AppModalsContainerProps> = ({
       {isCampOpen && player && (
         <CampHubModal
           player={player}
+          fullscreen={isTouch}
           onClose={() => setIsCampOpen(false)}
           onEnchantAdded={(name: string) => {
             engine?.addFloatingText(engine.player.x, engine.player.y, `觉醒附魔: ${name}`, '#c084fc', 18);
@@ -106,6 +110,7 @@ export const AppModalsContainer: React.FC<AppModalsContainerProps> = ({
       {isClassSelectOpen && player && (
         <ClassSelectModal
           currentClassId={player.characterClass || 'warrior'}
+          fullscreen={isTouch}
           onSelectClass={(classId, replaceGear) => {
             engine?.changePlayerClass(classId, replaceGear);
           }}
@@ -114,9 +119,10 @@ export const AppModalsContainer: React.FC<AppModalsContainerProps> = ({
       )}
 
       {/* Skill Tree Modal */}
-      {isSkillTreeOpen && player && (
+      {isSkillTreeOpen && (
         <SkillTreeModal
           player={player}
+          fullscreen={isTouch}
           onClose={() => setIsSkillTreeOpen(false)}
           onUpdate={onSkillTreeUpdate}
         />

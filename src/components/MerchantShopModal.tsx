@@ -9,6 +9,8 @@ interface MerchantShopModalProps {
   player: Player;
   onClose: () => void;
   onPurchase: (msg: string, ok: boolean) => void;
+  /** 触摸设备：全屏呈现（DI 式商店页） */
+  fullscreen?: boolean;
 }
 
 const getEmoji = (item: Item): string => {
@@ -47,7 +49,7 @@ function statChips(it: Item): string[] {
   return chips.slice(0, 3);
 }
 
-export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, onClose, onPurchase }) => {
+export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, onClose, onPurchase, fullscreen = false }) => {
   const [, force] = React.useReducer((x: number) => x + 1, 0);
   const [selected, setSelected] = React.useState<number | null>(null);
   const [cat, setCat] = React.useState<CatKey>('all');
@@ -82,9 +84,18 @@ export const MerchantShopModal: React.FC<MerchantShopModalProps> = ({ player, on
   const isAffordable = (entry: ShopEntry): boolean => player.stats.emeralds >= entry.price;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/85 backdrop-blur-sm p-2 sm:items-center sm:p-4" onClick={onClose}>
+    <div
+      className={`fixed inset-0 z-50 flex bg-black/85 backdrop-blur-sm ${
+        fullscreen ? 'items-stretch' : 'items-end justify-center p-2 sm:items-center sm:p-4'
+      }`}
+      onClick={onClose}
+    >
       <div
-        className="relative flex w-full max-w-4xl max-h-[94vh] max-h-[94dvh] sm:max-h-[90vh] max-h-[90dvh] flex-col overflow-hidden rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-stone-100"
+        className={`relative flex w-full max-w-4xl flex-col overflow-hidden text-stone-100 ${
+          fullscreen
+            ? 'h-full rounded-none border-0'
+            : 'max-h-[94dvh] sm:max-h-[90dvh] rounded-2xl border-2 border-amber-700/50 shadow-[0_0_60px_rgba(0,0,0,0.8)]'
+        }`}
         style={{ background: 'radial-gradient(ellipse at top, #33291f 0%, #221a12 45%, #181209 100%)' }}
         onClick={(e) => e.stopPropagation()}
       >
