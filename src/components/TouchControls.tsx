@@ -164,66 +164,66 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       </div>
 
       {/* ===== 摇杆右侧：交互 / 冲刺 / 背包 / 营地（2x2，不压左上视野） ===== */}
-      <div className="pointer-events-auto absolute left-[164px] bottom-7 grid grid-cols-2 gap-2.5 safe-left">
+      <div className="pointer-events-auto absolute left-[164px] bottom-7 grid grid-cols-2 gap-2.5">
         <TouchBtn icon="E" size={50} onPress={onInteract} className="border-emerald-400/70 bg-emerald-950/70 text-emerald-300 font-black shadow-[0_0_12px_rgba(52,211,153,0.35)]" label="交互" />
         <TouchBtn icon="💨" size={50} onPress={onDash} cooldown={player.dashCooldown} className="border-amber-400/70 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]" label="冲刺" />
         <TouchBtn icon="🎒" size={50} onPress={onOpenInventory} className="border-stone-400/60 bg-stone-800/80 shadow-lg" label="背包" />
         <TouchBtn icon="⛺" size={50} onPress={onOpenCamp} className="border-orange-400/60 bg-orange-950/70 shadow-lg" label="营地" />
       </div>
 
-      {/* ===== 右下：DI 风格技能轮盘 ===== */}
-      <div className="pointer-events-auto absolute bottom-5 right-5 safe-right safe-bottom" style={{ width: 240, height: 200 }}>
-        {/* 环绕弧：副手 + 技能1-4（绕大按钮左上方弧线排布） */}
+      {/* ===== 右下：DI 风格技能簇（显式坐标，贴死角落；无三角函数/负偏移） ===== */}
+      <div className="pointer-events-auto absolute bottom-4 right-3" style={{ width: 310, height: 210 }}>
+        {/* 大普攻按钮：最右下角 */}
+        <TouchBtn
+          icon="⚔️"
+          size={86}
+          onPress={onPrimaryDown}
+          onRelease={onPrimaryUp}
+          className="absolute border-amber-300/90 bg-gradient-to-b from-amber-800/80 to-stone-900/90 shadow-[0_0_20px_rgba(251,191,36,0.45)]"
+          style={{ right: 6, bottom: 6 }}
+        />
+        {/* 药水：普攻正上方 */}
+        <TouchBtn
+          icon="🧪"
+          size={60}
+          onPress={onPotion}
+          cooldown={cd('q', 'potion')}
+          className="absolute border-rose-400/70 bg-rose-950/70 shadow-[0_0_12px_rgba(251,113,133,0.35)]"
+          style={{ right: 16, bottom: 102 }}
+          label={`x${player.stats.potions}`}
+        />
+        {/* 副手特技：普攻左侧 */}
         <TouchBtn
           icon="⚡"
-          size={54}
+          size={56}
           onPress={onSecondaryDown}
           onRelease={onSecondaryUp}
           className="absolute border-sky-400/70 bg-sky-950/70 shadow-[0_0_12px_rgba(56,189,248,0.35)]"
-          style={{ right: 132, bottom: 96 }}
+          style={{ right: 102, bottom: 10 }}
         />
+        {/* 技能 1-4：向左上展开的弧（三列纵排，永不重叠） */}
         {(['1', '2', '3', '4'] as const).map((slot, i) => {
           const skill = skillSlot(slot);
           const fallbackIcons = ['💣', '🍎', '👁️', player.equipment.offhand?.subType === 'shield' ? '🛡️' : '🌪️'];
           const fallbackIds = ['tnt_toss', 'golden_apple', 'ender_pearl', player.equipment.offhand?.subType === 'shield' ? 'shield_bash' : 'whirlwind'];
-          const angles = [200, 240, 280, 320]; // 弧线角度（度，右下原点系）
-          const arcR = 104;
-          const rad = (angles[i] * Math.PI) / 180;
-          const x = 190 + Math.cos(rad) * arcR * 1.05;
-          const y = 128 + Math.sin(rad) * arcR * 0.72;
+          const pos = [
+            { right: 104, bottom: 78 },
+            { right: 104, bottom: 146 },
+            { right: 172, bottom: 42 },
+            { right: 172, bottom: 110 },
+          ][i];
           return (
             <TouchBtn
               key={slot}
               icon={skill ? skill.icon : fallbackIcons[i]}
-              size={54}
+              size={56}
               onPress={() => onSkill(slot)}
               cooldown={cd(slot, fallbackIds[i])}
               className={`absolute ${skill ? 'border-amber-400/80 bg-amber-950/70 shadow-[0_0_12px_rgba(251,191,36,0.35)]' : 'border-stone-500/70 bg-stone-800/80'}`}
-              style={{ right: 240 - x, bottom: y - 64 }}
+              style={pos}
             />
           );
         })}
-
-        {/* 药水（大按钮左侧） */}
-        <TouchBtn
-          icon="🧪"
-          size={58}
-          onPress={onPotion}
-          cooldown={cd('q', 'potion')}
-          className="absolute border-rose-400/70 bg-rose-950/70 shadow-[0_0_12px_rgba(251,113,133,0.35)]"
-          style={{ right: 150, bottom: 22 }}
-          label={`x${player.stats.potions}`}
-        />
-
-        {/* 大普攻按钮（最右下） */}
-        <TouchBtn
-          icon="⚔️"
-          size={84}
-          onPress={onPrimaryDown}
-          onRelease={onPrimaryUp}
-          className="absolute border-amber-300/90 bg-gradient-to-b from-amber-800/80 to-stone-900/90 shadow-[0_0_20px_rgba(251,191,36,0.45)]"
-          style={{ right: 12, bottom: 18 }}
-        />
       </div>
     </div>
   );
